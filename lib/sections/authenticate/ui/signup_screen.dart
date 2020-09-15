@@ -33,9 +33,12 @@ class _SignupScreenState extends State<SignupScreen> {
     return Stack(
       children: [
         Circle(
-          center: {"x": 350, "y": 70},
-          radius: 80,
-          strokeWidth: 20,
+          center: {
+            "x": SizeConfig.safeBlockHorizontal * 87,
+            "y": SizeConfig.safeBlockHorizontal * 15
+          },
+          radius: SizeConfig.safeBlockHorizontal * 20,
+          strokeWidth: SizeConfig.safeBlockHorizontal * 5,
           color: Color(0xFFfff7b3),
         ),
         Positioned(
@@ -43,22 +46,22 @@ class _SignupScreenState extends State<SignupScreen> {
           top: SizeConfig.blockSizeHorizontal * 40,
           child: SvgPicture.asset(
             "images/city_driver1.svg",
-            height: 250.0,
+            height: SizeConfig.safeBlockHorizontal * 60,
           ),
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": 70, "y": 200},
-            radius: 3,
-            strokeWidth: 10,
+            center: {"x": SizeConfig.safeBlockHorizontal * 17, "y": SizeConfig.safeBlockHorizontal * 47},
+            radius: SizeConfig.safeBlockHorizontal * 0.7,
+            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFF7F98),
           ),
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": 40, "y": 300},
-            radius: 3,
-            strokeWidth: 10,
+            center: {"x": SizeConfig.safeBlockHorizontal * 10, "y": SizeConfig.safeBlockHorizontal * 70},
+            radius: SizeConfig.safeBlockHorizontal * 0.7,
+            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFDE171),
           ),
         ),
@@ -85,8 +88,8 @@ class _SignupScreenState extends State<SignupScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50.0),
-                topRight: Radius.circular(50.0),
+                topLeft: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
+                topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
             child: _signInBody(),
@@ -125,7 +128,7 @@ class _SignupScreenState extends State<SignupScreen> {
             maxLength: 10,
             decoration: numberTextDecoration.copyWith(
               prefixIcon: SizedBox(
-                width: 20.0,
+                width: SizeConfig.safeBlockHorizontal * 5,
                 child: Center(
                   child: Text(
                     '+91',
@@ -163,7 +166,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               decoration: BoxDecoration(
                 color: Color(0xFFfdea9b),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
               ),
             ),
           ),
@@ -175,7 +178,7 @@ class _SignupScreenState extends State<SignupScreen> {
               Navigator.pop(context);
             },
             child: Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 2),
               child: Center(
                 child: RichText(
                   text: TextSpan(

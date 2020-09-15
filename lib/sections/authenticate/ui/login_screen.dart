@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
@@ -17,6 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+
+    ScreenUtil.init(context, width: 750, height: 1334, allowFontScaling: false);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.yellow[100],
       statusBarIconBrightness: Brightness.dark,
@@ -35,45 +38,45 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Circle(
           center: {
-            "x": SizeConfig.safeBlockHorizontal * 87,
-            "y": SizeConfig.safeBlockHorizontal * 15
+            "x": SizeConfig.blockSizeHorizontal * 87,
+            "y": SizeConfig.blockSizeVertical * 8
           },
-          radius: SizeConfig.safeBlockHorizontal * 20,
-          strokeWidth: SizeConfig.safeBlockHorizontal * 5,
+          radius: SizeConfig.blockSizeHorizontal * 20,
+          strokeWidth: SizeConfig.blockSizeHorizontal * 5,
           color: Color(0xFFfff7b3),
         ),
         Positioned(
-          left: SizeConfig.blockSizeHorizontal * 17,
-          top: SizeConfig.blockSizeHorizontal * 40,
+          left: SizeConfig.blockSizeHorizontal * 20,
+          top: SizeConfig.blockSizeVertical * 20,
           child: SvgPicture.asset(
             "images/city_driver1.svg",
-            height: SizeConfig.safeBlockHorizontal * 60,
+            width: SizeConfig.blockSizeHorizontal*80,
           ),
         ),
         Positioned(
           child: HollowCircle(
             center: {
-              "x": SizeConfig.safeBlockHorizontal * 17,
-              "y": SizeConfig.safeBlockHorizontal * 47
+              "x": SizeConfig.blockSizeHorizontal * 17,
+              "y": SizeConfig.blockSizeVertical*23
             },
-            radius: SizeConfig.safeBlockHorizontal * 0.7,
-            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
+            radius: SizeConfig.blockSizeHorizontal * 0.7,
+            strokeWidth: SizeConfig.blockSizeHorizontal * 2.5,
             color: Color(0xFFFF7F98),
           ),
         ),
         Positioned(
           child: HollowCircle(
             center: {
-              "x": SizeConfig.safeBlockHorizontal * 10,
-              "y": SizeConfig.safeBlockHorizontal * 70
+              "x": SizeConfig.blockSizeHorizontal * 10,
+              "y": SizeConfig.blockSizeVertical * 35
             },
-            radius: SizeConfig.safeBlockHorizontal * 0.7,
-            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
+            radius: SizeConfig.blockSizeHorizontal * 0.7,
+            strokeWidth: SizeConfig.blockSizeHorizontal * 2.5,
             color: Color(0xFFFDE171),
           ),
         ),
         Positioned(
-          top: SizeConfig.blockSizeHorizontal * 16,
+          top: SizeConfig.blockSizeVertical * 8,
           left: SizeConfig.blockSizeHorizontal * 5,
           child: Container(
             width: SizeConfig.blockSizeHorizontal * 40,
@@ -110,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
-          SizeConfig.blockSizeHorizontal * 10,
+          SizeConfig.blockSizeVertical * 5,
           SizeConfig.blockSizeHorizontal * 10,
           0),
       child: Column(
@@ -123,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontSize: SizeConfig.blockSizeHorizontal * 6),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           Text(
             'Enter Your Mobile Number',
@@ -135,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
             maxLength: 10,
             decoration: numberTextDecoration.copyWith(
               prefixIcon: SizedBox(
-                width: SizeConfig.safeBlockHorizontal * 5,
+                width: SizeConfig.blockSizeHorizontal * 5,
                 child: Center(
                   child: Text(
                     '+91',
@@ -150,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           InkWell(
             onTap: () {
@@ -163,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      vertical: SizeConfig.blockSizeHorizontal * 3),
+                      vertical: SizeConfig.blockSizeVertical * 1.5),
                   child: Text(
                     'Get OTP',
                     style: TextStyle(
@@ -174,12 +177,12 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: BoxDecoration(
                 color: Color(0xFFfdea9b),
                 borderRadius:
-                    BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
+                    BorderRadius.circular(SizeConfig.blockSizeHorizontal * 2),
               ),
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 5,
+            height: SizeConfig.blockSizeVertical * 3.0,
           ),
           InkWell(
             onTap: () {
@@ -187,7 +190,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   MaterialPageRoute(builder: (context) => SignupScreen()));
             },
             child: Container(
-              padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 2),
               child: Center(
                 child: RichText(
                   text: TextSpan(

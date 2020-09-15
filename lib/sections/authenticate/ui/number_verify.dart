@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
 import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
-import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -25,18 +24,21 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
       resizeToAvoidBottomInset: true,
       body: Container(
         color: Colors.yellow[100],
-        child: _signupBody(),
+        child: _numberVerify(),
       ),
     );
   }
 
-  Widget _signupBody() {
+  Widget _numberVerify() {
     return Stack(
       children: [
         Circle(
-          center: {"x": 350, "y": 70},
-          radius: 80,
-          strokeWidth: 20,
+          center: {
+            "x": SizeConfig.safeBlockHorizontal * 87,
+            "y": SizeConfig.safeBlockHorizontal * 15
+          },
+          radius: SizeConfig.safeBlockHorizontal * 20,
+          strokeWidth: SizeConfig.safeBlockHorizontal * 5,
           color: Color(0xFFfff7b3),
         ),
         Positioned(
@@ -44,22 +46,28 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           top: SizeConfig.blockSizeHorizontal * 45,
           child: SvgPicture.asset(
             "images/phone_verify.svg",
-            height: 220.0,
+            height: SizeConfig.safeBlockHorizontal * 50,
           ),
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": 70, "y": 200},
-            radius: 3,
-            strokeWidth: 10,
+            center: {
+              "x": SizeConfig.safeBlockHorizontal * 17,
+              "y": SizeConfig.safeBlockHorizontal * 47
+            },
+            radius: SizeConfig.safeBlockHorizontal * 0.7,
+            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFF7F98),
           ),
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": 40, "y": 300},
-            radius: 3,
-            strokeWidth: 10,
+            center: {
+              "x": SizeConfig.safeBlockHorizontal * 10,
+              "y": SizeConfig.safeBlockHorizontal * 70
+            },
+            radius: SizeConfig.safeBlockHorizontal * 0.7,
+            strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFDE171),
           ),
         ),
@@ -86,18 +94,18 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50.0),
-                topRight: Radius.circular(50.0),
+                topLeft: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
+                topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: _signInBody(),
+            child: _verify(),
           ),
         ),
       ],
     );
   }
 
-  Widget _signInBody() {
+  Widget _verify() {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
@@ -139,7 +147,8 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 selectedColor: Colors.grey[200],
                 inactiveFillColor: Colors.grey[200],
                 selectedFillColor: Colors.grey[200],
-                borderRadius: BorderRadius.circular(5.0)),
+                borderRadius: BorderRadius.circular(
+                    SizeConfig.safeBlockHorizontal * 1.5)),
             onChanged: (value) {},
           ),
           SizedBox(
@@ -154,11 +163,12 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                       color: Colors.black54, fontFamily: "Poppins-Medium"),
                   children: [
                     TextSpan(
-                        text: " Resend",
-                        style: TextStyle(
-                            color: Color(0xFF91D3B3),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16))
+                      text: " Resend",
+                      style: TextStyle(
+                          color: Color(0xFF91D3B3),
+                          fontWeight: FontWeight.bold,
+                          fontSize: SizeConfig.safeBlockHorizontal * 3.7),
+                    )
                   ]),
             ),
           ),
@@ -184,7 +194,8 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
               ),
               decoration: BoxDecoration(
                 color: Color(0xFFfdea9b),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius:
+                    BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
               ),
             ),
           ),
