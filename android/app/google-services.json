@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "683385508793",
+    "firebase_url": "https://morgadi-535b3.firebaseio.com",
+    "project_id": "morgadi-535b3",
+    "storage_bucket": "morgadi-535b3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683385508793:android:bc719f8de887b249e6dc68",
+        "android_client_info": {
+          "package_name": "com.example.morgadi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683385508793-47fv87eqs14tj0iqp2224nq2i9rluc03.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.morgadi",
+            "certificate_hash": "a6053f952c6e1d9354e482e1e09a1f2598f9f072"
+          }
+        },
+        {
+          "client_id": "683385508793-lcne2kfcrsuflc49tb00013187tgg8hk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC80kf60Y-_W91Frl0yiISP1IpxFkG5Mcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683385508793-lcne2kfcrsuflc49tb00013187tgg8hk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

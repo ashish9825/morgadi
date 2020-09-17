@@ -47,26 +47,26 @@ class _SignupDetailState extends State<SignupDetail> {
       children: [
         Circle(
           center: {
-            "x": SizeConfig.safeBlockHorizontal * 87,
-            "y": SizeConfig.safeBlockHorizontal * 15
+            "x": SizeConfig.blockSizeHorizontal * 87,
+            "y": SizeConfig.blockSizeVertical * 8
           },
-          radius: SizeConfig.safeBlockHorizontal * 20,
+          radius: SizeConfig.blockSizeHorizontal * 20,
           strokeWidth: SizeConfig.safeBlockHorizontal * 5,
           color: Color(0xFFfff7b3),
         ),
         Positioned(
           left: SizeConfig.blockSizeHorizontal * 45,
-          top: SizeConfig.blockSizeHorizontal * 12,
+          top: SizeConfig.blockSizeVertical * 6,
           child: SvgPicture.asset(
             "images/personal_detail.svg",
-            height: SizeConfig.safeBlockHorizontal * 47,
+            width: SizeConfig.blockSizeHorizontal * 55,
           ),
         ),
         Positioned(
           child: HollowCircle(
             center: {
               "x": SizeConfig.safeBlockHorizontal * 17,
-              "y": SizeConfig.safeBlockHorizontal * 47
+              "y": SizeConfig.blockSizeVertical*23
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -76,8 +76,8 @@ class _SignupDetailState extends State<SignupDetail> {
         Positioned(
           child: HollowCircle(
             center: {
-              "x": SizeConfig.safeBlockHorizontal * 10,
-              "y": SizeConfig.safeBlockHorizontal * 70
+              "x": SizeConfig.blockSizeHorizontal * 10,
+              "y": SizeConfig.blockSizeVertical * 35
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -85,7 +85,7 @@ class _SignupDetailState extends State<SignupDetail> {
           ),
         ),
         Positioned(
-          top: SizeConfig.blockSizeHorizontal * 16,
+          top: SizeConfig.blockSizeVertical * 8,
           left: SizeConfig.blockSizeHorizontal * 5,
           child: Container(
             width: SizeConfig.blockSizeHorizontal * 40,
@@ -105,7 +105,7 @@ class _SignupDetailState extends State<SignupDetail> {
             height: SizeConfig.screenHeight * 0.7,
             width: SizeConfig.screenWidth,
             constraints: BoxConstraints(
-              minHeight: SizeConfig.blockSizeHorizontal * 0.6,
+              minHeight: SizeConfig.blockSizeVertical * 0.3,
             ),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -125,7 +125,7 @@ class _SignupDetailState extends State<SignupDetail> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
-          SizeConfig.blockSizeHorizontal * 10,
+          SizeConfig.blockSizeVertical * 5,
           SizeConfig.blockSizeHorizontal * 10,
           0),
       child: Column(
@@ -139,7 +139,7 @@ class _SignupDetailState extends State<SignupDetail> {
                 fontSize: SizeConfig.blockSizeHorizontal * 6),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           Text(
             'Name',
@@ -150,14 +150,14 @@ class _SignupDetailState extends State<SignupDetail> {
             style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
             decoration: numberTextDecoration.copyWith(
               contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.safeBlockHorizontal * 2.8,
+                  vertical: SizeConfig.blockSizeVertical * 1.4,
                   horizontal: SizeConfig.safeBlockHorizontal * 2.8),
               hintText: 'John Doe',
               fillColor: Colors.grey[200],
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 3,
+            height: SizeConfig.blockSizeVertical * 1.5,
           ),
           Text(
             'Email',
@@ -168,14 +168,14 @@ class _SignupDetailState extends State<SignupDetail> {
             style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
             decoration: numberTextDecoration.copyWith(
               contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.safeBlockHorizontal * 2.8,
+                  vertical: SizeConfig.blockSizeVertical * 1.4,
                   horizontal: SizeConfig.safeBlockHorizontal * 2.8),
               hintText: 'johndoe@gmail.com',
               fillColor: Colors.grey[200],
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 3,
+            height: SizeConfig.blockSizeVertical * 1.5,
           ),
           Text(
             'City',
@@ -186,20 +186,20 @@ class _SignupDetailState extends State<SignupDetail> {
             style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
             decoration: numberTextDecoration.copyWith(
               contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.safeBlockHorizontal * 2.8,
+                  vertical: SizeConfig.blockSizeVertical * 1.4,
                   horizontal: SizeConfig.safeBlockHorizontal * 2.8),
               hintText: 'Bilaspur',
               fillColor: Colors.grey[200],
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 3,
+            height: SizeConfig.blockSizeVertical * 1.5,
           ),
           Text(
             'Do You Own Any Car',
           ),
           Container(
-            height: SizeConfig.safeBlockHorizontal * 9,
+            height: SizeConfig.blockSizeVertical * 4.5,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: yesOrNo.length,
@@ -217,13 +217,13 @@ class _SignupDetailState extends State<SignupDetail> {
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 4,
           ),
           Container(
             child: Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    vertical: SizeConfig.blockSizeHorizontal * 3),
+                    vertical: SizeConfig.blockSizeVertical * 1.5),
                 child: Text(
                   'Go Ahead',
                   style:

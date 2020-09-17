@@ -18,12 +18,12 @@ class AnyCar extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(
             horizontal: SizeConfig.safeBlockHorizontal * 3,
-            vertical: SizeConfig.safeBlockHorizontal * 0.6),
+            vertical: SizeConfig.blockSizeVertical * 0.3),
         child: Row(
           children: [
             SvgPicture.asset(
               _item.assetImage,
-              height: SizeConfig.safeBlockHorizontal * 3.5,
+              height: SizeConfig.blockSizeVertical * 1.75,
               color: _item.isSelected ? _item.assetColor : Colors.black,
             ),
             SizedBox(

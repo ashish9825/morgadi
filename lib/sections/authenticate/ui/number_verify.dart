@@ -35,7 +35,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
         Circle(
           center: {
             "x": SizeConfig.safeBlockHorizontal * 87,
-            "y": SizeConfig.safeBlockHorizontal * 15
+            "y": SizeConfig.blockSizeVertical * 8
           },
           radius: SizeConfig.safeBlockHorizontal * 20,
           strokeWidth: SizeConfig.safeBlockHorizontal * 5,
@@ -43,17 +43,17 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
         ),
         Positioned(
           left: SizeConfig.blockSizeHorizontal * 30,
-          top: SizeConfig.blockSizeHorizontal * 45,
+          top: SizeConfig.blockSizeVertical * 21,
           child: SvgPicture.asset(
             "images/phone_verify.svg",
-            height: SizeConfig.safeBlockHorizontal * 50,
+            width: SizeConfig.safeBlockHorizontal * 60,
           ),
         ),
         Positioned(
           child: HollowCircle(
             center: {
               "x": SizeConfig.safeBlockHorizontal * 17,
-              "y": SizeConfig.safeBlockHorizontal * 47
+              "y": SizeConfig.blockSizeVertical*23
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -64,7 +64,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           child: HollowCircle(
             center: {
               "x": SizeConfig.safeBlockHorizontal * 10,
-              "y": SizeConfig.safeBlockHorizontal * 70
+              "y": SizeConfig.blockSizeVertical * 35
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -72,7 +72,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           ),
         ),
         Positioned(
-          top: SizeConfig.blockSizeHorizontal * 16,
+          top: SizeConfig.blockSizeVertical * 8,
           left: SizeConfig.blockSizeHorizontal * 5,
           child: Container(
             width: SizeConfig.blockSizeHorizontal * 40,
@@ -109,7 +109,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
-          SizeConfig.blockSizeHorizontal * 10,
+          SizeConfig.blockSizeVertical * 5,
           SizeConfig.blockSizeHorizontal * 10,
           0),
       child: Column(
@@ -122,13 +122,13 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 fontSize: SizeConfig.blockSizeHorizontal * 6),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           Text(
             'Enter Verification Code',
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 5,
+            height: SizeConfig.blockSizeVertical * 2.5,
           ),
           PinCodeTextField(
             appContext: context,
@@ -152,7 +152,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
             onChanged: (value) {},
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 4,
           ),
           Center(
             child: RichText(
@@ -173,7 +173,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 5,
+            height: SizeConfig.blockSizeVertical * 2.5,
           ),
           InkWell(
             onTap: () {
@@ -184,7 +184,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      vertical: SizeConfig.blockSizeHorizontal * 3),
+                      vertical: SizeConfig.blockSizeVertical * 1.5),
                   child: Text(
                     'Verify',
                     style: TextStyle(

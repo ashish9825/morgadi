@@ -35,23 +35,26 @@ class _SignupScreenState extends State<SignupScreen> {
         Circle(
           center: {
             "x": SizeConfig.safeBlockHorizontal * 87,
-            "y": SizeConfig.safeBlockHorizontal * 15
+            "y": SizeConfig.blockSizeVertical * 8
           },
           radius: SizeConfig.safeBlockHorizontal * 20,
           strokeWidth: SizeConfig.safeBlockHorizontal * 5,
           color: Color(0xFFfff7b3),
         ),
         Positioned(
-          left: SizeConfig.blockSizeHorizontal * 17,
-          top: SizeConfig.blockSizeHorizontal * 40,
+          left: SizeConfig.blockSizeHorizontal * 20,
+          top: SizeConfig.blockSizeVertical * 20,
           child: SvgPicture.asset(
             "images/city_driver1.svg",
-            height: SizeConfig.safeBlockHorizontal * 60,
+            width: SizeConfig.blockSizeHorizontal * 80,
           ),
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": SizeConfig.safeBlockHorizontal * 17, "y": SizeConfig.safeBlockHorizontal * 47},
+            center: {
+              "x": SizeConfig.safeBlockHorizontal * 17,
+              "y": SizeConfig.blockSizeVertical * 23
+            },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFF7F98),
@@ -59,14 +62,17 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
         Positioned(
           child: HollowCircle(
-            center: {"x": SizeConfig.safeBlockHorizontal * 10, "y": SizeConfig.safeBlockHorizontal * 70},
+            center: {
+              "x": SizeConfig.safeBlockHorizontal * 10,
+              "y": SizeConfig.blockSizeVertical * 35
+            },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
             color: Color(0xFFFDE171),
           ),
         ),
         Positioned(
-          top: SizeConfig.blockSizeHorizontal * 16,
+          top: SizeConfig.blockSizeVertical * 8,
           left: SizeConfig.blockSizeHorizontal * 5,
           child: Container(
             width: SizeConfig.blockSizeHorizontal * 40,
@@ -92,18 +98,18 @@ class _SignupScreenState extends State<SignupScreen> {
                 topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: _signInBody(),
+            child: _signUpBody(),
           ),
         ),
       ],
     );
   }
 
-  Widget _signInBody() {
+  Widget _signUpBody() {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
-          SizeConfig.blockSizeHorizontal * 10,
+          SizeConfig.blockSizeVertical * 5,
           SizeConfig.blockSizeHorizontal * 10,
           0),
       child: Column(
@@ -116,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 fontSize: SizeConfig.blockSizeHorizontal * 6),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           Text(
             'Enter Your Mobile Number',
@@ -143,7 +149,7 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 10,
+            height: SizeConfig.blockSizeVertical * 5,
           ),
           InkWell(
             onTap: () {
@@ -156,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      vertical: SizeConfig.blockSizeHorizontal * 3),
+                      vertical: SizeConfig.blockSizeVertical * 1.5),
                   child: Text(
                     'Get OTP',
                     style: TextStyle(
@@ -166,19 +172,19 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               decoration: BoxDecoration(
                 color: Color(0xFFfdea9b),
-                borderRadius: BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
+                borderRadius:
+                    BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
               ),
             ),
           ),
           SizedBox(
-            height: SizeConfig.blockSizeHorizontal * 5,
+            height: SizeConfig.blockSizeVertical * 3.0,
           ),
           InkWell(
             onTap: () {
               Navigator.pop(context);
             },
             child: Container(
-              padding: EdgeInsets.all(SizeConfig.safeBlockHorizontal * 2),
               child: Center(
                 child: RichText(
                   text: TextSpan(
