@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
-import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
+import 'package:morgadi/sections/authenticate/bloc/authentication_bloc.dart';
+import 'package:morgadi/sections/authenticate/bloc/authentication_event.dart';
+import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
 import 'package:morgadi/utils/size_config.dart';
+import 'package:morgadi/utils/utility_functions.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class NUmberVerifyScreen extends StatefulWidget {
+  final LoginState loginState;
+  final LoginBLoc loginBLoc;
+
+  NUmberVerifyScreen({this.loginState, this.loginBLoc});
+
   @override
   _NumberVerifyState createState() => _NumberVerifyState();
 }
 
 class _NumberVerifyState extends State<NUmberVerifyScreen> {
+  LoginState get loginState => widget.loginState;
+  LoginBLoc get loginBloc => widget.loginBLoc;
+
+  @override
+  void initState() {
+  
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -22,14 +40,45 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
     ));
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        color: Colors.yellow[100],
-        child: _numberVerify(),
+      body: BlocListener<LoginBLoc, LoginState>(
+        cubit: loginBloc,
+        listener: (context, loginState) {
+          if (loginState is ExceptionState || loginState is OtpExceptionState) {
+            String message;
+            if (loginState is ExceptionState) {
+              message = loginState.message;
+            } else if (loginState is OtpExceptionState) {
+              message = loginState.message;
+            }
+
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Text(message), Icon(Icons.error)],
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+          }
+        },
+        child: BlocBuilder<LoginBLoc, LoginState>(
+
+         cubit: loginBloc, 
+          builder: (context, state) {
+            return Container(
+              color: Colors.yellow[100],
+              child: _numberVerify(state),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _numberVerify() {
+  Widget _numberVerify(LoginState state) {
     return Stack(
       children: [
         Circle(
@@ -53,7 +102,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           child: HollowCircle(
             center: {
               "x": SizeConfig.safeBlockHorizontal * 17,
-              "y": SizeConfig.blockSizeVertical*23
+              "y": SizeConfig.blockSizeVertical * 23
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -98,14 +147,34 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: _verify(),
+            child: getViewAsPerState(state),
           ),
         ),
       ],
     );
   }
 
-  Widget _verify() {
+  getViewAsPerState(LoginState state) {
+    print('STAtE1: $state');
+    // if (state is OtpSentState || state is OtpExceptionState) {
+    //   return _verify(state);
+    // } else if (state is LoadingState) {
+    //   return UtilityFunction().loadingIndicator(
+    //       SizeConfig.blockSizeHorizontal * 20,
+    //       SizeConfig.blockSizeHorizontal * 3,
+    //       Colors.black);
+    // } else if (state is LoginCompleteState) {
+    //   Future.delayed(Duration.zero, () async {
+    //     BlocProvider.of<AuthenticationBloc>(context)
+    //         .add(LoggedIn(token: state.getUser().uid));
+    //   });
+    // } else {
+      return _verify(state);
+    // }
+  }
+
+  Widget _verify(LoginState state) {
+    print('SECOND STATE: $state');
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
@@ -149,6 +218,9 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 selectedFillColor: Colors.grey[200],
                 borderRadius: BorderRadius.circular(
                     SizeConfig.safeBlockHorizontal * 1.5)),
+            // onCompleted: (pin) {
+            //   BlocProvider.of<LoginBLoc>(context).add(VerifyOtpEvent(otp: pin));
+            // },
             onChanged: (value) {},
           ),
           SizedBox(
@@ -177,8 +249,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SignupDetail()));
+              BlocProvider.of<LoginBLoc>(context).add(AppStartEvent());
             },
             child: Container(
               child: Center(

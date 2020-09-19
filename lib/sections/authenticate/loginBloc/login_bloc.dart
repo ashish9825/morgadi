@@ -3,21 +3,19 @@ import 'package:bloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/data/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import './bloc.dart';
+import 'bloc.dart';
 
 class LoginBLoc extends Bloc<LoginEvent, LoginState> {
   final UserRepository _userRepository;
   StreamSubscription subscription;
 
   String verId = "";
+  String errorString = "";
 
   LoginBLoc({@required UserRepository userRepository})
       : assert(userRepository != null),
         _userRepository = userRepository,
-        super(null);
-
-  @override
-  LoginState get initialState => InitialLoginState();
+        super(InitialLoginState());
 
   @override
   Stream<LoginState> mapEventToState(LoginEvent event) async* {
@@ -32,7 +30,7 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
     } else if (event is LoginCompleteEvent) {
       yield LoginCompleteState(event.firebaseUser);
     } else if (event is LoginExceptionEvent) {
-      yield ExceptionState(message: event.message);
+      yield ExceptionState(message: errorString);
     } else if (event is VerifyOtpEvent) {
       yield LoadingState();
       try {
@@ -82,8 +80,9 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
     };
 
     final phoneVerificationFailed = (FirebaseAuthException authException) {
+      errorString = authException.message;
       print(authException.message);
-      eventStream.add(LoginExceptionEvent(onError.toString()));
+      eventStream.add(LoginExceptionEvent(errorString));
       eventStream.close();
     };
 
