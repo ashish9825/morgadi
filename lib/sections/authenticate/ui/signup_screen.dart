@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
+import 'package:morgadi/sections/authenticate/bloc/authentication_state.dart';
+import 'package:morgadi/sections/authenticate/bloc/bloc.dart';
+import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/ui/number_verify.dart';
+import 'package:morgadi/sections/homeSection/ui/home.dart';
 import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupPage extends StatelessWidget {
+  final LoginState loginState;
+  final LoginBLoc loginBLoc;
+
+  SignupPage({Key key, @required this.loginBLoc, this.loginState})
+      : super(key: key);
+
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginBLoc>(
+      create: (context) => loginBLoc,
+      child: SignupScreen(loginBLoc: loginBLoc),
+    );
+  }
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class SignupScreen extends StatelessWidget {
+  LoginBLoc loginBLoc;
+
+  SignupScreen({this.loginBLoc});
+  var _formKey = GlobalKey<FormState>();
+  var _phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -22,14 +45,59 @@ class _SignupScreenState extends State<SignupScreen> {
     ));
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        color: Colors.yellow[100],
-        child: _signupBody(),
+      body: BlocListener<LoginBLoc, LoginState>(
+        cubit: loginBLoc,
+        listener: (context, signupState) {
+          print('STATESSS; $signupState');
+          if (signupState is ExceptionState ||
+              signupState is OtpExceptionState) {
+            String message;
+            if (signupState is ExceptionState) {
+              message = signupState.message;
+            } else if (signupState is OtpExceptionState) {
+              message = signupState.message;
+            }
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(child: Text(message)),
+                      Icon(Icons.error)
+                    ],
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+          } else if (signupState is OtpSentState) {
+            Future.delayed(Duration.zero, () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NumberVerify(
+                    loginState: signupState,
+                    loginBLoc: loginBLoc,
+                  ),
+                ),
+              );
+            });
+          }
+        },
+        child: BlocBuilder<LoginBLoc, LoginState>(
+          builder: (context, state) {
+            return Container(
+              color: Colors.yellow[100],
+              child: _signupBody(state, context),
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _signupBody() {
+  Widget _signupBody(LoginState state, BuildContext context) {
     return Stack(
       children: [
         Circle(
@@ -89,23 +157,42 @@ class _SignupScreenState extends State<SignupScreen> {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            height: SizeConfig.screenHeight * 0.5,
-            width: SizeConfig.screenWidth,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
-                topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
+              height: SizeConfig.screenHeight * 0.5,
+              width: SizeConfig.screenWidth,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
+                  topRight:
+                      Radius.circular(SizeConfig.blockSizeHorizontal * 13),
+                ),
               ),
-            ),
-            child: _signUpBody(),
-          ),
+              child: getViewAsPerState(state, context)),
         ),
       ],
     );
   }
 
-  Widget _signUpBody() {
+  getViewAsPerState(LoginState state, BuildContext context) {
+    print('STAtE: $state');
+    if (state is SignupFirstState) {
+      return _signUpBody(state, context);
+    } else if (state is LoadingState) {
+      return _loadingIndicator();
+    } else if (state is SignupCompleteState) {
+      Future.delayed(Duration.zero, () async {
+        BlocProvider.of<AuthenticationBloc>(context)
+            .add(LoggedIn(token: state.getUser().uid));
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      });
+    } else {
+      return _signUpBody(state, context);
+    }
+  }
+
+  Widget _signUpBody(LoginState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
@@ -128,6 +215,7 @@ class _SignupScreenState extends State<SignupScreen> {
             'Enter Your Mobile Number',
           ),
           TextFormField(
+            controller: _phoneController,
             cursorColor: Colors.black,
             keyboardType: TextInputType.phone,
             style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
@@ -147,16 +235,18 @@ class _SignupScreenState extends State<SignupScreen> {
               counter: Container(),
               fillColor: Colors.grey[200],
             ),
+            validator: (value) {
+              return validateMobile(value);
+            },
           ),
           SizedBox(
             height: SizeConfig.blockSizeVertical * 5,
           ),
           InkWell(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => NUmberVerifyScreen()));
+              print('PhoneControllerText : ${_phoneController.text}');
+              BlocProvider.of<LoginBLoc>(context)
+                  .add(SendOtpEvent(phoneNo: '+91' + _phoneController.text));
             },
             child: Container(
               child: Center(
@@ -201,6 +291,31 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String validateMobile(String value) {
+    //Indian Mobile Numbers are of 10 digits.
+    if (value.length != 10) {
+      return 'Mobile Number must be of 10 digits';
+    } else {
+      return null;
+    }
+  }
+
+  Widget _loadingIndicator() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SpinKitRipple(
+            color: Colors.black,
+            size: SizeConfig.blockSizeHorizontal * 20,
+            borderWidth: SizeConfig.blockSizeHorizontal * 3,
           ),
         ],
       ),

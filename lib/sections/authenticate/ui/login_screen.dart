@@ -10,7 +10,6 @@ import 'package:morgadi/sections/authenticate/bloc/authentication_state.dart';
 import 'package:morgadi/sections/authenticate/data/user_repository.dart';
 import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/ui/number_verify.dart';
-import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
 import 'package:morgadi/sections/authenticate/ui/signup_screen.dart';
 import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
@@ -26,12 +25,15 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LoginBLoc>(
       create: (context) => LoginBLoc(userRepository: userRepository),
-      child: LoginScreen(),
+      child: LoginScreen(userRepository),
     );
   }
 }
 
 class LoginScreen extends StatefulWidget {
+  final UserRepository userRepository;
+
+  LoginScreen(this.userRepository);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -61,12 +63,27 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<LoginBLoc, LoginState>(
         cubit: _loginBLoc,
         listener: (context, loginState) {
+          print('STATESSS; $loginState');
           if (loginState is ExceptionState || loginState is OtpExceptionState) {
             String message;
             if (loginState is ExceptionState) {
               message = loginState.message;
             } else if (loginState is OtpExceptionState) {
               message = loginState.message;
+            } else if (loginState is OtpSentState ||
+                loginState is OtpExceptionState) {
+              Future.delayed(Duration.zero, () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NumberVerify(
+                      loginState: loginState,
+                      loginBLoc: _loginBLoc,
+                      // userRepository: widget.userRepository,
+                    ),
+                  ),
+                );
+              });
             }
 
             Scaffold.of(context)
@@ -83,6 +100,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   backgroundColor: Colors.red,
                 ),
               );
+          } else if (loginState is OtpSentState) {
+            Future.delayed(Duration.zero, () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NumberVerify(
+                    loginState: loginState,
+                    loginBLoc: _loginBLoc,
+                  ),
+                ),
+              );
+            });
           }
         },
         child: BlocBuilder<LoginBLoc, LoginState>(
@@ -179,16 +208,6 @@ class _LoginScreenState extends State<LoginScreen> {
       return _signInBody(state);
     } else if (state is LoadingState) {
       return _loadingIndicator();
-    } else if (state is OtpSentState || state is OtpExceptionState) {
-      Future.delayed(Duration.zero, () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                NUmberVerifyScreen(loginState: state, loginBLoc: _loginBLoc),
-          ),
-        );
-      });
     } else if (state is LoginCompleteState) {
       print('Login State: $state');
     } else {
@@ -275,8 +294,13 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           InkWell(
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => SignupScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SignupPage(
+                            loginBLoc: _loginBLoc,
+                            loginState: state,
+                          )));
             },
             child: Container(
               child: Center(

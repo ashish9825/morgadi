@@ -11,6 +11,7 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
 
   String verId = "";
   String errorString = "";
+  bool newUser = false;
 
   LoginBLoc({@required UserRepository userRepository})
       : assert(userRepository != null),
@@ -29,6 +30,25 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
       yield OtpSentState();
     } else if (event is LoginCompleteEvent) {
       yield LoginCompleteState(event.firebaseUser);
+    } else if (event is SignupFirstEvent) {
+      yield SignupFirstState(event.firebaseUser);
+    } else if (event is SignupDataSent) {
+      yield LoadingState();
+      try {
+        User user =
+            await _userRepository.getUpdatedUser(event.name, event.email);
+
+        if (user != null) {
+          yield SignupCompleteState(user);
+        } else {
+          yield ExceptionState(message: 'Some Error Occured');
+        }
+      } catch (e) {
+        yield ExceptionState(message: 'Some Error Occured');
+        print(e);
+      }
+    } else if (event is SignupCompleteEvent) {
+      yield SignupCompleteState(event.firebaseUser);
     } else if (event is LoginExceptionEvent) {
       yield ExceptionState(message: errorString);
     } else if (event is VerifyOtpEvent) {
@@ -38,7 +58,13 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
             await _userRepository.verifyAndLogin(verId, event.otp);
 
         if (result.user != null) {
-          yield LoginCompleteState(result.user);
+          print('NEW USER: ${result.additionalUserInfo.isNewUser}');
+          if (result.additionalUserInfo.isNewUser) {
+            this.newUser = true;
+            yield SignupFirstState(result.user);
+          } else {
+            yield LoginCompleteState(result.user);
+          }
         } else {
           yield OtpExceptionState(message: 'Invalid Otp !');
         }
@@ -74,8 +100,13 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
       _userRepository.getUser().catchError((onError) {
         print(onError);
       }).then((user) {
-        eventStream.add(LoginCompleteEvent(user));
-        eventStream.close();
+        if (this.newUser) {
+          eventStream.add(SignupFirstEvent(user));
+          eventStream.close();
+        } else {
+          eventStream.add(LoginCompleteEvent(user));
+          eventStream.close();
+        }
       });
     };
 

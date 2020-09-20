@@ -34,4 +34,13 @@ class UserRepository {
     var user = _firebaseAuth.currentUser;
     return user;
   }
+
+  Future<User> getUpdatedUser(String name, String email) async {
+    var user = _firebaseAuth.currentUser;
+    await user.updateProfile(displayName: name);
+    await user.updateEmail(email);
+    await user.reload();
+
+    return user;
+  }
 }

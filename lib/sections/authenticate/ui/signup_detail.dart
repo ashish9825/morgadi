@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
-import 'package:morgadi/sections/authenticate/model/any_car_item.dart';
+import 'package:morgadi/sections/authenticate/bloc/authentication_bloc.dart';
+import 'package:morgadi/sections/authenticate/bloc/bloc.dart';
+import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/widgets/any_car.dart';
+import 'package:morgadi/sections/homeSection/ui/home.dart';
 import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
+import 'package:morgadi/utils/utility_functions.dart';
 
-class SignupDetail extends StatefulWidget {
+class SignupDetailPage extends StatelessWidget {
+  final LoginBLoc loginBLoc;
+  final LoginState loginState;
+
+  SignupDetailPage({Key key, @required this.loginBLoc, this.loginState})
+      : super(key: key);
+
   @override
-  _SignupDetailState createState() => _SignupDetailState();
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginBLoc>(
+      create: (context) => loginBLoc,
+      child: SignupDetail(
+        loginState: loginState,
+        loginBloc: loginBLoc,
+      ),
+    );
+  }
 }
 
-class _SignupDetailState extends State<SignupDetail> {
-  List<AnyCarItem> yesOrNo = List<AnyCarItem>();
+class SignupDetail extends StatelessWidget {
+  final LoginState loginState;
+  final LoginBLoc loginBloc;
 
-  @override
-  void initState() {
-    super.initState();
-
-    yesOrNo.add(AnyCarItem(
-        true, 'Yes', Colors.grey[200], "images/yes.svg", Color(0xFFc8a104)));
-    yesOrNo.add(AnyCarItem(
-        false, 'No', Colors.grey[200], "images/no.svg", Color(0xFFc8a104)));
-  }
+  SignupDetail({this.loginState, this.loginBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +47,42 @@ class _SignupDetailState extends State<SignupDetail> {
     ));
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: Container(
-        color: Colors.yellow[100],
-        child: _signupDetail(),
+      body: BlocListener<LoginBLoc, LoginState>(
+        cubit: loginBloc,
+        listener: (context, loginState) {
+          if (loginState is ExceptionState || loginState is OtpExceptionState) {
+            String message;
+            if (loginState is ExceptionState) {
+              message = loginState.message;
+            } else if (loginState is OtpExceptionState) {
+              message = loginState.message;
+            }
+
+            Scaffold.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [Text(message), Icon(Icons.error)],
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+          }
+        },
+        child: BlocBuilder<LoginBLoc, LoginState>(
+          cubit: loginBloc,
+          builder: (context, state) => Container(
+            color: Colors.yellow[100],
+            child: _signupDetail(state, context),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _signupDetail() {
+  Widget _signupDetail(LoginState state, BuildContext context) {
     return Stack(
       children: [
         Circle(
@@ -66,7 +106,7 @@ class _SignupDetailState extends State<SignupDetail> {
           child: HollowCircle(
             center: {
               "x": SizeConfig.safeBlockHorizontal * 17,
-              "y": SizeConfig.blockSizeVertical*23
+              "y": SizeConfig.blockSizeVertical * 23
             },
             radius: SizeConfig.safeBlockHorizontal * 0.7,
             strokeWidth: SizeConfig.safeBlockHorizontal * 2.5,
@@ -114,14 +154,36 @@ class _SignupDetailState extends State<SignupDetail> {
                 topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: _signUpDetailBody(),
+            child: _signUpDetailBody(state, context),
           ),
         ),
       ],
     );
   }
 
-  Widget _signUpDetailBody() {
+  getViewAsPerState(LoginState state, BuildContext context) {
+    print('STATEInDetails: $state');
+    if (state is OtpSentState || state is OtpExceptionState) {
+      return _signUpDetailBody(state, context);
+    } else if (state is LoadingState) {
+      return UtilityFunction().loadingIndicator(
+          SizeConfig.blockSizeHorizontal * 20,
+          SizeConfig.blockSizeHorizontal * 3,
+          Colors.black);
+    } else if (state is LoginCompleteState) {
+      Future.delayed(Duration.zero, () async {
+        BlocProvider.of<AuthenticationBloc>(context)
+            .add(LoggedIn(token: state.getUser().uid));
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      });
+    } else {
+      return _signUpDetailBody(state, context);
+    }
+  }
+
+  Widget _signUpDetailBody(LoginState state, BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(
           SizeConfig.blockSizeHorizontal * 10,
@@ -204,14 +266,18 @@ class _SignupDetailState extends State<SignupDetail> {
               scrollDirection: Axis.horizontal,
               itemCount: yesOrNo.length,
               itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      yesOrNo.forEach((element) => element.isSelected = false);
-                      yesOrNo[index].isSelected = true;
-                    });
-                  },
-                  child: AnyCar(yesOrNo[index]),
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter stateSetter) =>
+                      InkWell(
+                    onTap: () {
+                      stateSetter(() {
+                        yesOrNo
+                            .forEach((element) => element.isSelected = false);
+                        yesOrNo[index].isSelected = true;
+                      });
+                    },
+                    child: AnyCar(yesOrNo[index]),
+                  ),
                 );
               },
             ),

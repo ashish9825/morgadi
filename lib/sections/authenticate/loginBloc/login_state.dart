@@ -38,6 +38,32 @@ class LoginCompleteState extends LoginState {
   List<Object> get props => [_firebaseUser];
 }
 
+class SignupFirstState extends LoginState {
+  final User _firebaseUser;
+
+  SignupFirstState(this._firebaseUser);
+
+  User getUser() {
+    return _firebaseUser;
+  }
+
+  @override
+  List<Object> get props => [_firebaseUser];
+}
+
+class SignupCompleteState extends LoginState {
+  final User _firebaseUser;
+
+  SignupCompleteState(this._firebaseUser);
+
+  User getUser() {
+    return _firebaseUser;
+  }
+
+  @override
+  List<Object> get props => [_firebaseUser];
+}
+
 class ExceptionState extends LoginState {
   final String message;
 

@@ -7,29 +7,36 @@ import 'package:morgadi/paints/hollow_circle_painter.dart';
 import 'package:morgadi/sections/authenticate/bloc/authentication_bloc.dart';
 import 'package:morgadi/sections/authenticate/bloc/authentication_event.dart';
 import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
+import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
+import 'package:morgadi/sections/homeSection/ui/home.dart';
 import 'package:morgadi/utils/size_config.dart';
 import 'package:morgadi/utils/utility_functions.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-class NUmberVerifyScreen extends StatefulWidget {
+class NumberVerify extends StatelessWidget {
   final LoginState loginState;
   final LoginBLoc loginBLoc;
 
-  NUmberVerifyScreen({this.loginState, this.loginBLoc});
+  NumberVerify({Key key, @required this.loginBLoc, this.loginState})
+      : super(key: key);
 
   @override
-  _NumberVerifyState createState() => _NumberVerifyState();
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginBLoc>(
+      create: (context) => loginBLoc,
+      child: NumberVerifyState(
+        loginBloc: loginBLoc,
+        loginState: loginState,
+      ),
+    );
+  }
 }
 
-class _NumberVerifyState extends State<NUmberVerifyScreen> {
-  LoginState get loginState => widget.loginState;
-  LoginBLoc get loginBloc => widget.loginBLoc;
+class NumberVerifyState extends StatelessWidget {
+  final LoginState loginState;
+  final LoginBLoc loginBloc;
 
-  @override
-  void initState() {
-  
-    super.initState();
-  }
+  NumberVerifyState({this.loginState, this.loginBloc});
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +72,11 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
           }
         },
         child: BlocBuilder<LoginBLoc, LoginState>(
-
-         cubit: loginBloc, 
+          cubit: loginBloc,
           builder: (context, state) {
             return Container(
               color: Colors.yellow[100],
-              child: _numberVerify(state),
+              child: _numberVerify(state, context),
             );
           },
         ),
@@ -78,7 +84,7 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
     );
   }
 
-  Widget _numberVerify(LoginState state) {
+  Widget _numberVerify(LoginState state, BuildContext context) {
     return Stack(
       children: [
         Circle(
@@ -147,33 +153,41 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: getViewAsPerState(state),
+            child: getViewAsPerState(state, context),
           ),
         ),
       ],
     );
   }
 
-  getViewAsPerState(LoginState state) {
+  getViewAsPerState(LoginState state, BuildContext context) {
     print('STAtE1: $state');
-    // if (state is OtpSentState || state is OtpExceptionState) {
-    //   return _verify(state);
-    // } else if (state is LoadingState) {
-    //   return UtilityFunction().loadingIndicator(
-    //       SizeConfig.blockSizeHorizontal * 20,
-    //       SizeConfig.blockSizeHorizontal * 3,
-    //       Colors.black);
-    // } else if (state is LoginCompleteState) {
-    //   Future.delayed(Duration.zero, () async {
-    //     BlocProvider.of<AuthenticationBloc>(context)
-    //         .add(LoggedIn(token: state.getUser().uid));
-    //   });
-    // } else {
-      return _verify(state);
-    // }
+    if (state is OtpSentState || state is OtpExceptionState) {
+      return _verify(state, context);
+    } else if (state is LoadingState) {
+      return UtilityFunction().loadingIndicator(
+          SizeConfig.blockSizeHorizontal * 20,
+          SizeConfig.blockSizeHorizontal * 3,
+          Colors.black);
+    } else if (state is LoginCompleteState) {
+      Future.delayed(Duration.zero, () async {
+        BlocProvider.of<AuthenticationBloc>(context)
+            .add(LoggedIn(token: state.getUser().uid));
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      });
+    } else if (state is SignupFirstState) {
+      Future.delayed(Duration.zero, () async {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SignupDetail()));
+      });
+    } else {
+      return _verify(state, context);
+    }
   }
 
-  Widget _verify(LoginState state) {
+  Widget _verify(LoginState state, BuildContext context) {
     print('SECOND STATE: $state');
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -218,9 +232,9 @@ class _NumberVerifyState extends State<NUmberVerifyScreen> {
                 selectedFillColor: Colors.grey[200],
                 borderRadius: BorderRadius.circular(
                     SizeConfig.safeBlockHorizontal * 1.5)),
-            // onCompleted: (pin) {
-            //   BlocProvider.of<LoginBLoc>(context).add(VerifyOtpEvent(otp: pin));
-            // },
+            onCompleted: (pin) {
+              BlocProvider.of<LoginBLoc>(context).add(VerifyOtpEvent(otp: pin));
+            },
             onChanged: (value) {},
           ),
           SizedBox(

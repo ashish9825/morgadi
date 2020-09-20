@@ -34,3 +34,20 @@ class LoginExceptionEvent extends LoginEvent {
 
   LoginExceptionEvent(this.message);
 }
+
+class SignupFirstEvent extends LoginEvent {
+  final User firebaseUser;
+  SignupFirstEvent(this.firebaseUser);
+}
+
+class SignupDataSent extends LoginEvent {
+  final String name;
+  final String email;
+
+  SignupDataSent(this.name, this.email);
+}
+
+class SignupCompleteEvent extends LoginEvent {
+  final User firebaseUser;
+  SignupCompleteEvent(this.firebaseUser);
+}
