@@ -79,6 +79,7 @@ class SignupScreen extends StatelessWidget {
                   builder: (context) => NumberVerify(
                     loginState: signupState,
                     loginBLoc: loginBLoc,
+                    phoneNumber: '+91' + _phoneController.text,
                   ),
                 ),
               );
@@ -179,7 +180,7 @@ class SignupScreen extends StatelessWidget {
       return _signUpBody(state, context);
     } else if (state is LoadingState) {
       return _loadingIndicator();
-    } else if (state is SignupCompleteState) {
+    } else if (state is LoginCompleteState) {
       Future.delayed(Duration.zero, () async {
         BlocProvider.of<AuthenticationBloc>(context)
             .add(LoggedIn(token: state.getUser().uid));

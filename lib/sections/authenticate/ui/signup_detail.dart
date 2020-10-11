@@ -16,9 +16,10 @@ import 'package:morgadi/utils/utility_functions.dart';
 class SignupDetailPage extends StatelessWidget {
   final LoginBLoc loginBLoc;
   final LoginState loginState;
+  final String phoneNumber;
 
-  SignupDetailPage({Key key, @required this.loginBLoc, this.loginState})
-      : super(key: key);
+  SignupDetailPage(
+      {@required this.loginBLoc, this.loginState, this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class SignupDetailPage extends StatelessWidget {
       child: SignupDetail(
         loginState: loginState,
         loginBloc: loginBLoc,
+        phoneNumber: phoneNumber,
       ),
     );
   }
@@ -35,8 +37,14 @@ class SignupDetailPage extends StatelessWidget {
 class SignupDetail extends StatelessWidget {
   final LoginState loginState;
   final LoginBLoc loginBloc;
+  final String phoneNumber;
 
-  SignupDetail({this.loginState, this.loginBloc});
+  var _nameController = TextEditingController();
+  var _emailController = TextEditingController();
+  var _cityController = TextEditingController();
+  bool ownCar = true;
+
+  SignupDetail({this.loginState, this.loginBloc, this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +162,7 @@ class SignupDetail extends StatelessWidget {
                 topRight: Radius.circular(SizeConfig.blockSizeHorizontal * 13),
               ),
             ),
-            child: _signUpDetailBody(state, context),
+            child: getViewAsPerState(state, context),
           ),
         ),
       ],
@@ -170,7 +178,7 @@ class SignupDetail extends StatelessWidget {
           SizeConfig.blockSizeHorizontal * 20,
           SizeConfig.blockSizeHorizontal * 3,
           Colors.black);
-    } else if (state is LoginCompleteState) {
+    } else if (state is SignupCompleteState) {
       Future.delayed(Duration.zero, () async {
         BlocProvider.of<AuthenticationBloc>(context)
             .add(LoggedIn(token: state.getUser().uid));
@@ -190,120 +198,140 @@ class SignupDetail extends StatelessWidget {
           SizeConfig.blockSizeVertical * 5,
           SizeConfig.blockSizeHorizontal * 10,
           0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Personal Details',
-            style: TextStyle(
-                fontFamily: "Poppins-Medium",
-                fontSize: SizeConfig.blockSizeHorizontal * 6),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical * 5,
-          ),
-          Text(
-            'Name',
-          ),
-          TextFormField(
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.name,
-            style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-            decoration: numberTextDecoration.copyWith(
-              contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 1.4,
-                  horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-              hintText: 'John Doe',
-              fillColor: Colors.grey[200],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Personal Details',
+              style: TextStyle(
+                  fontFamily: "Poppins-Medium",
+                  fontSize: SizeConfig.blockSizeHorizontal * 6),
             ),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical * 1.5,
-          ),
-          Text(
-            'Email',
-          ),
-          TextFormField(
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-            decoration: numberTextDecoration.copyWith(
-              contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 1.4,
-                  horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-              hintText: 'johndoe@gmail.com',
-              fillColor: Colors.grey[200],
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 5,
             ),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical * 1.5,
-          ),
-          Text(
-            'City',
-          ),
-          TextFormField(
-            cursorColor: Colors.black,
-            keyboardType: TextInputType.emailAddress,
-            style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-            decoration: numberTextDecoration.copyWith(
-              contentPadding: EdgeInsets.symmetric(
-                  vertical: SizeConfig.blockSizeVertical * 1.4,
-                  horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-              hintText: 'Bilaspur',
-              fillColor: Colors.grey[200],
+            Text(
+              'Name',
             ),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical * 1.5,
-          ),
-          Text(
-            'Do You Own Any Car',
-          ),
-          Container(
-            height: SizeConfig.blockSizeVertical * 4.5,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: yesOrNo.length,
-              itemBuilder: (context, index) {
-                return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter stateSetter) =>
-                      InkWell(
-                    onTap: () {
-                      stateSetter(() {
-                        yesOrNo
-                            .forEach((element) => element.isSelected = false);
-                        yesOrNo[index].isSelected = true;
-                      });
-                    },
-                    child: AnyCar(yesOrNo[index]),
-                  ),
-                );
-              },
+            TextFormField(
+              controller: _nameController,
+              cursorColor: Colors.black,
+              keyboardType: TextInputType.name,
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
+              decoration: numberTextDecoration.copyWith(
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: SizeConfig.blockSizeVertical * 1.4,
+                    horizontal: SizeConfig.safeBlockHorizontal * 2.8),
+                hintText: 'John Doe',
+                fillColor: Colors.grey[200],
+              ),
             ),
-          ),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical * 4,
-          ),
-          Container(
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: SizeConfig.blockSizeVertical * 1.5),
-                child: Text(
-                  'Go Ahead',
-                  style:
-                      TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 3.7),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 1.5,
+            ),
+            Text(
+              'Email',
+            ),
+            TextFormField(
+              controller: _emailController,
+              cursorColor: Colors.black,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
+              decoration: numberTextDecoration.copyWith(
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: SizeConfig.blockSizeVertical * 1.4,
+                    horizontal: SizeConfig.safeBlockHorizontal * 2.8),
+                hintText: 'johndoe@gmail.com',
+                fillColor: Colors.grey[200],
+              ),
+            ),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 1.5,
+            ),
+            Text(
+              'City',
+            ),
+            TextFormField(
+              controller: _cityController,
+              cursorColor: Colors.black,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
+              decoration: numberTextDecoration.copyWith(
+                contentPadding: EdgeInsets.symmetric(
+                    vertical: SizeConfig.blockSizeVertical * 1.4,
+                    horizontal: SizeConfig.safeBlockHorizontal * 2.8),
+                hintText: 'Bilaspur',
+                fillColor: Colors.grey[200],
+              ),
+            ),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 1.5,
+            ),
+            Text(
+              'Do You Own Any Car',
+            ),
+            StatefulBuilder(
+              builder: (BuildContext context, StateSetter stateSetter) =>
+                  Container(
+                height: SizeConfig.blockSizeVertical * 4.5,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: yesOrNo.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        stateSetter(() {
+                          yesOrNo
+                              .forEach((element) => element.isSelected = false);
+                          yesOrNo[index].isSelected = true;
+                        });
+                        ownCar = yesOrNo[0].isSelected == true
+                            ? ownCar = true
+                            : ownCar = false;
+                      },
+                      child: AnyCar(yesOrNo[index]),
+                    );
+                  },
                 ),
               ),
             ),
-            decoration: BoxDecoration(
-              color: Color(0xFFfdea9b),
-              borderRadius:
-                  BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical * 4,
             ),
-          ),
-        ],
+            InkWell(
+              onTap: () {
+                BlocProvider.of<LoginBLoc>(context).add(
+                  SignupDataSentEvent(
+                      _nameController.text,
+                      _emailController.text,
+                      _cityController.text,
+                      ownCar,
+                      phoneNumber),
+                );
+              },
+              child: Container(
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: SizeConfig.blockSizeVertical * 1.5),
+                    child: Text(
+                      'Go Ahead',
+                      style: TextStyle(
+                          fontSize: SizeConfig.blockSizeHorizontal * 3.7),
+                    ),
+                  ),
+                ),
+                decoration: BoxDecoration(
+                  color: Color(0xFFfdea9b),
+                  borderRadius:
+                      BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

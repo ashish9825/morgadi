@@ -16,9 +16,9 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 class NumberVerify extends StatelessWidget {
   final LoginState loginState;
   final LoginBLoc loginBLoc;
+  final String phoneNumber;
 
-  NumberVerify({Key key, @required this.loginBLoc, this.loginState})
-      : super(key: key);
+  NumberVerify({@required this.loginBLoc, this.loginState, this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +27,7 @@ class NumberVerify extends StatelessWidget {
       child: NumberVerifyState(
         loginBloc: loginBLoc,
         loginState: loginState,
+        phoneNumber: phoneNumber,
       ),
     );
   }
@@ -35,8 +36,9 @@ class NumberVerify extends StatelessWidget {
 class NumberVerifyState extends StatelessWidget {
   final LoginState loginState;
   final LoginBLoc loginBloc;
+  final String phoneNumber;
 
-  NumberVerifyState({this.loginState, this.loginBloc});
+  NumberVerifyState({this.loginState, this.loginBloc, this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,19 @@ class NumberVerifyState extends StatelessWidget {
                   backgroundColor: Colors.red,
                 ),
               );
+          } else if (loginState is SignupFirstState) {
+            Future.delayed(Duration.zero, () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SignupDetailPage(
+                    loginBLoc: loginBloc,
+                    loginState: loginState,
+                    phoneNumber: phoneNumber,
+                  ),
+                ),
+              );
+            });
           }
         },
         child: BlocBuilder<LoginBLoc, LoginState>(
@@ -176,11 +191,6 @@ class NumberVerifyState extends StatelessWidget {
 
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => Home()));
-      });
-    } else if (state is SignupFirstState) {
-      Future.delayed(Duration.zero, () async {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SignupDetail()));
       });
     } else {
       return _verify(state, context);

@@ -3,11 +3,13 @@ import 'package:bloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/data/user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:morgadi/utils/preferences.dart';
 import 'bloc.dart';
 
 class LoginBLoc extends Bloc<LoginEvent, LoginState> {
   final UserRepository _userRepository;
   StreamSubscription subscription;
+  final Preferences prefs = Preferences();
 
   String verId = "";
   String errorString = "";
@@ -32,11 +34,17 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
       yield LoginCompleteState(event.firebaseUser);
     } else if (event is SignupFirstEvent) {
       yield SignupFirstState(event.firebaseUser);
-    } else if (event is SignupDataSent) {
+    } else if (event is SignupDataSentEvent) {
       yield LoadingState();
       try {
         User user =
             await _userRepository.getUpdatedUser(event.name, event.email);
+
+        await _userRepository.addUser(event.name, event.phoneNumber,
+            event.email, event.city, event.ownCar);
+
+        await prefs.saveBasicUserDetails(event.city, event.email, event.name,
+            event.ownCar, event.phoneNumber);
 
         if (user != null) {
           yield SignupCompleteState(user);

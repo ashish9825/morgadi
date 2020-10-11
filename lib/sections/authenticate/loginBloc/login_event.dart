@@ -40,11 +40,15 @@ class SignupFirstEvent extends LoginEvent {
   SignupFirstEvent(this.firebaseUser);
 }
 
-class SignupDataSent extends LoginEvent {
+class SignupDataSentEvent extends LoginEvent {
   final String name;
   final String email;
+  final String city;
+  final bool ownCar;
+  final String phoneNumber;
 
-  SignupDataSent(this.name, this.email);
+  SignupDataSentEvent(
+      this.name, this.email, this.city, this.ownCar, this.phoneNumber);
 }
 
 class SignupCompleteEvent extends LoginEvent {
