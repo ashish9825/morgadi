@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:morgadi/sections/carBuySellSection/bloc/buysell_bloc.dart';
 import 'package:morgadi/sections/carBuySellSection/widgets/buy_car_dialog.dart';
 import 'package:morgadi/utils/size_config.dart';
 
 class BuyCar extends StatelessWidget {
+  final BuySellBloc buySellBloc;
+
+  BuyCar(this.buySellBloc);
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Stack(
       children: [
         SingleChildScrollView(
-          child: Container(color: Colors.transparent,),
+          child: Container(
+            color: Colors.transparent,
+          ),
         ),
         Align(
           alignment: Alignment.bottomRight,
@@ -18,7 +24,7 @@ class BuyCar extends StatelessWidget {
               showDialog(
                   context: context,
                   builder: (context) {
-                    return BuyCarDialog();
+                    return BuyCarDialog(buySellBloc: buySellBloc);
                   });
             },
             child: Container(

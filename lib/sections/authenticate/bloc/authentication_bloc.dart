@@ -12,7 +12,6 @@ class AuthenticationBloc
   @override
   Stream<AuthenticationState> mapEventToState(
       AuthenticationEvent event) async* {
-    
     if (event is AppStarted) {
       final bool hasToken = await userRepository.getUser() != null;
 
@@ -32,5 +31,10 @@ class AuthenticationBloc
       yield Loading();
       yield Unauthenticated();
     }
+  }
+
+  @override
+  Future<void> close() {
+    return super.close();
   }
 }

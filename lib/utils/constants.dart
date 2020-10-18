@@ -42,9 +42,82 @@ List<String> serviceNames = [
 
 List<String> cityOptions = ['Champa', 'Bilaspur', 'Korba', 'Raigarh', 'Raipur'];
 
-Map<String, dynamic> perKmCharge = {
-  'Indica': 13,
-  'Swift': 14,
-  'Ertiga': 16,
-  'Innova': 21,
+Map<String, dynamic> perKmCharges = {
+  'Maruti Suzuki Ertiga': 16,
+  'Maruti Suzuki Swift': 14,
+  'Tata Indica': 13,
+  'Toyota Innova': 21,
 };
+
+Map<String, dynamic> convCharges = {
+  'Maruti Suzuki Ertiga': 400,
+  'Maruti Suzuki Swift': 300,
+  'Tata Indica': 200,
+  'Toyota Innova': 500,
+};
+
+Map<String, dynamic> bilaspur = {
+  'Champa': 56,
+  'Korba': 90,
+  'Raigarh': 150,
+  'Raipur': 118,
+};
+
+Map<String, dynamic> champa = {
+  'Bilaspur': 56,
+  'Korba': 50,
+  'Raigarh': 100,
+  'Raipur': 170,
+};
+
+Map<String, dynamic> korba = {
+  'Bilaspur': 90,
+  'Champa': 50,
+  'Raigarh': 110,
+  'Raipur': 212,
+};
+
+Map<String, dynamic> raigarh = {
+  'Bilaspur': 150,
+  'Champa': 100,
+  'Korba': 110,
+  'Raipur': 256,
+};
+
+Map<String, dynamic> raipur = {
+  'Bilaspur': 118,
+  'Champa': 170,
+  'Korba': 212,
+  'Raigarh': 256,
+};
+
+List carBrands = [
+  'Ford',
+  'Honda',
+  'Hyundai',
+  'Kia',
+  'Mahindra',
+  'Maruti Suzuki',
+  'Nissan',
+  'Renault',
+  'Tata',
+  'Toyota',
+];
+
+List ford = [
+  'Aspire',
+  'Figo',
+  'Freestyle',
+  'EcoSport',
+  'Endeavour',
+];
+
+List honda = [
+  'Amaze',
+  'BR-V',
+  'City',
+  'Civic',
+  'CR-V',
+  'Jazz',
+  'WR-V',
+];  

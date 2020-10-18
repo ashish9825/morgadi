@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:morgadi/sections/carMortgageSection/bloc/mortgage.dart';
+import 'package:morgadi/sections/carMortgageSection/data/mortgage_repository.dart';
+import 'package:morgadi/sections/carMortgageSection/widgets/mortgage_dialog.dart';
 import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
 
-class CarMortgageScreen extends StatefulWidget {
+class CarMortgageScreen extends StatelessWidget {
   @override
-  _CarMortgageScreenState createState() => _CarMortgageScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<MortgageBloc>(
+      create: (context) =>
+          MortgageBloc(mortgageRepository: MortgageRepository()),
+      child: CarMortgage(),
+    );
+  }
 }
 
-class _CarMortgageScreenState extends State<CarMortgageScreen> {
+class CarMortgage extends StatefulWidget {
+  @override
+  _CarMortgageState createState() => _CarMortgageState();
+}
+
+class _CarMortgageState extends State<CarMortgage> {
+  TextEditingController _amountController = TextEditingController();
+  TextEditingController _carController = TextEditingController();
+  TextEditingController _modelController = TextEditingController();
+  TextEditingController _variantController = TextEditingController();
+  TextEditingController _regNoController = TextEditingController();
+  TextEditingController _yearController = TextEditingController();
+
+  MortgageBloc _mortgageBloc;
+
+  @override
+  void initState() {
+    _mortgageBloc = BlocProvider.of<MortgageBloc>(context);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +110,9 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Amount Needed',
                   ),
                   TextFormField(
+                    controller: _amountController,
                     cursorColor: Colors.black,
+                    keyboardType: TextInputType.number,
                     style:
                         TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
                     decoration: numberTextDecoration.copyWith(
@@ -111,6 +142,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Car',
                   ),
                   TextFormField(
+                    controller: _carController,
                     cursorColor: Colors.black,
                     style:
                         TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
@@ -118,7 +150,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                       contentPadding: EdgeInsets.symmetric(
                           vertical: SizeConfig.blockSizeVertical * 1.4,
                           horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-                      hintText: 'Honda Creta',
+                      hintText: 'Hyundai Creta',
                       hintStyle: TextStyle(color: Colors.grey[500]),
                       fillColor: Colors.grey[200],
                     ),
@@ -130,6 +162,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Model',
                   ),
                   TextFormField(
+                    controller: _modelController,
                     cursorColor: Colors.black,
                     style:
                         TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
@@ -149,8 +182,9 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Engine Variant',
                   ),
                   TextFormField(
+                    controller: _variantController,
                     cursorColor: Colors.black,
-                    keyboardType: TextInputType.number,
+              
                     style:
                         TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
                     decoration: numberTextDecoration.copyWith(
@@ -169,6 +203,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Registration Number',
                   ),
                   TextFormField(
+                    controller: _regNoController,
                     cursorColor: Colors.black,
                     style:
                         TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
@@ -188,6 +223,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                     'Year Of Origin',
                   ),
                   TextFormField(
+                    controller: _yearController,
                     cursorColor: Colors.black,
                     keyboardType: TextInputType.number,
                     style:
@@ -204,22 +240,7 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
                   SizedBox(
                     height: SizeConfig.blockSizeVertical * 5,
                   ),
-                  Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: SizeConfig.blockSizeHorizontal * 4,
-                          vertical: SizeConfig.blockSizeVertical * 2),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(
-                            SizeConfig.blockSizeHorizontal * 2),
-                      ),
-                      child: Text(
-                        'Request',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+                  _confirmButton(),
                   SizedBox(
                     height: SizeConfig.blockSizeVertical * 5,
                   ),
@@ -230,5 +251,75 @@ class _CarMortgageScreenState extends State<CarMortgageScreen> {
         ),
       ),
     );
+  }
+
+  Widget _confirmButton() {
+    return Builder(
+      builder: (context) => InkWell(
+        onTap: () {
+          if (_amountController.text != "" &&
+              _carController.text != "" &&
+              _modelController.text != "" &&
+              _variantController.text != "" &&
+              _regNoController.text != "" &&
+              _yearController.text != "") {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) => WillPopScope(
+                onWillPop: () async => false,
+                child: MortgageDialog(
+                  mortgageBloc: _mortgageBloc,
+                  amount: _amountController.text,
+                  car: _carController.text,
+                  model: _modelController.text,
+                  variant: _variantController.text,
+                  regNo: _regNoController.text,
+                  originYear: _yearController.text,
+                ),
+              ),
+            );
+          } else {
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Please fill in all the details !',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Icon(Icons.error),
+                  ],
+                ),
+                backgroundColor: Colors.red[300],
+              ),
+            );
+          }
+        },
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.blockSizeHorizontal * 4,
+                vertical: SizeConfig.blockSizeVertical * 2),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius:
+                  BorderRadius.circular(SizeConfig.blockSizeHorizontal * 2),
+            ),
+            child: Text(
+              'Request',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _mortgageBloc.close();
+    super.dispose();
   }
 }

@@ -33,3 +33,8 @@ class LoggedOut extends AuthenticationEvent {
   @override
   List<Object> get props => [];
 }
+
+class NoConnectivityEvent extends AuthenticationEvent {
+  @override
+  List<Object> get props => [];
+}

@@ -27,3 +27,9 @@ class Loading extends AuthenticationState {
   @override
   String toString() => 'Loading';
 }
+
+class NoConnectivity extends AuthenticationState {
+  final String message;
+
+  NoConnectivity({this.message});
+}

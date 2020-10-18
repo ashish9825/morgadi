@@ -3,42 +3,63 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:lottie/lottie.dart';
 import 'package:morgadi/sections/carBuySellSection/bloc/buy_sell.dart';
-import 'package:morgadi/sections/carBuySellSection/bloc/buysell_bloc.dart';
-import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/size_config.dart';
 
-class BuyCarDialog extends StatelessWidget {
+class SellConfirmDialoog extends StatelessWidget {
   final BuySellBloc buySellBloc;
+  final String car;
+  final String model;
+  final String variant;
+  final String regNo;
+  final String year;
 
-  BuyCarDialog({this.buySellBloc});
-
+  SellConfirmDialoog({
+    @required this.buySellBloc,
+    @required this.car,
+    @required this.model,
+    @required this.variant,
+    @required this.regNo,
+    @required this.year,
+  });
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => buySellBloc,
-      child: BuyCarConfirm(
+      child: SellConfirm(
         buySellBloc: buySellBloc,
+        car: car,
+        model: model,
+        variant: variant,
+        regNo: regNo,
+        year: year,
       ),
     );
   }
 }
 
-class BuyCarConfirm extends StatelessWidget {
+class SellConfirm extends StatelessWidget {
   final BuySellBloc buySellBloc;
+  final String car;
+  final String model;
+  final String variant;
+  final String regNo;
+  final String year;
 
-  BuyCarConfirm({@required this.buySellBloc});
-
-  TextEditingController _carController = TextEditingController();
-  TextEditingController _modelController = TextEditingController();
-  TextEditingController _variantController = TextEditingController();
-  TextEditingController _yearController = TextEditingController();
+  SellConfirm({
+    @required this.buySellBloc,
+    @required this.car,
+    @required this.model,
+    @required this.variant,
+    @required this.regNo,
+    @required this.year,
+  });
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
+        borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * 5),
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
@@ -49,10 +70,10 @@ class BuyCarConfirm extends StatelessWidget {
             String message;
             message = buysellState.message;
 
-            print('Error: $message');
+            print('Error : $message');
           }
         },
-        child: BlocBuilder(
+        child: BlocBuilder<BuySellBloc, BuySellState>(
           cubit: buySellBloc,
           builder: (context, state) => getViewAsPerState(state, context),
         ),
@@ -61,153 +82,103 @@ class BuyCarConfirm extends StatelessWidget {
   }
 
   getViewAsPerState(BuySellState state, BuildContext context) {
-    print('State : $state');
+    print('STATE: $state');
     if (state is InitialBuySellState) {
       return _dialogContent(context);
     } else if (state is BuySellLoadingState) {
       return _loadingIndicator();
-    } else if (state is BuyRequestedState) {
+    } else if (state is SellRequestedState) {
       return _confirmedContent(context);
     } else if (state is BuySellNoNetworkState) {
       return _noInternetContent(context);
-    }else {
+    } else {
       return _dialogContent(context);
     }
   }
 
-  Container _dialogContent(BuildContext context) {
+  Widget _dialogContent(BuildContext context) {
     return Container(
-      // height: SizeConfig.blockSizeVertical * 65,
+      padding: EdgeInsets.only(
+        top: SizeConfig.blockSizeVertical * 1.5,
+        bottom: SizeConfig.blockSizeVertical * 1.5,
+        left: SizeConfig.blockSizeHorizontal * 4,
+        right: SizeConfig.blockSizeHorizontal * 4,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * 5),
       ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(
-            SizeConfig.blockSizeHorizontal * 5,
-            SizeConfig.blockSizeVertical * 5,
-            SizeConfig.blockSizeHorizontal * 5,
-            0),
-        child: SingleChildScrollView(
-          child: StatefulBuilder(
-            builder: (context, stateSetter) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Sell $car',
+            style: TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
+          ),
+          Container(
+            color: Color(0xFFFF7F98),
+            height: SizeConfig.blockSizeHorizontal,
+            width: SizeConfig.blockSizeHorizontal * 5,
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical * 4),
+          RichText(
+            text: TextSpan(
+                text: 'Do you want to confirm the request to register ',
+                style: TextStyle(
+                    color: Colors.black, fontFamily: "Poppins-Medium"),
+                children: <TextSpan>[
+                  TextSpan(
+                      text: '$car',
+                      style: TextStyle(fontWeight: FontWeight.w700)),
+                  TextSpan(text: ' for sell', style: TextStyle()),
+                  TextSpan(text: '.'),
+                ]),
+          ),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical * 5,
+          ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Car',
-                ),
-                TextFormField(
-                  controller: _carController,
-                  cursorColor: Colors.black,
-                  style:
-                      TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-                  decoration: numberTextDecoration.copyWith(
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: SizeConfig.blockSizeVertical * 1.4,
-                        horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-                    hintText: 'Hyundai Creta',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    fillColor: Colors.grey[200],
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
                 SizedBox(
-                  height: SizeConfig.blockSizeVertical * 1.5,
-                ),
-                Text(
-                  'Preferred Model',
-                ),
-                TextFormField(
-                  controller: _modelController,
-                  cursorColor: Colors.black,
-                  style:
-                      TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-                  decoration: numberTextDecoration.copyWith(
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: SizeConfig.blockSizeVertical * 1.4,
-                        horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-                    hintText: 'SX Turbo 7 DCT',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical * 1.5,
-                ),
-                Text(
-                  'Preferred Engine Variant',
-                ),
-                TextFormField(
-                  controller: _variantController,
-                  cursorColor: Colors.black,
-                  style:
-                      TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-                  decoration: numberTextDecoration.copyWith(
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: SizeConfig.blockSizeVertical * 1.4,
-                        horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-                    hintText: 'Petrol',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical * 1.5,
-                ),
-                Text(
-                  'Year Of Origin Range',
-                ),
-                TextFormField(
-                  controller: _yearController,
-                  cursorColor: Colors.black,
-                  keyboardType: TextInputType.number,
-                  style:
-                      TextStyle(fontSize: SizeConfig.blockSizeHorizontal * 4),
-                  decoration: numberTextDecoration.copyWith(
-                    contentPadding: EdgeInsets.symmetric(
-                        vertical: SizeConfig.blockSizeVertical * 1.4,
-                        horizontal: SizeConfig.safeBlockHorizontal * 2.8),
-                    hintText: '2014 - 2016',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    fillColor: Colors.grey[200],
-                  ),
-                ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical * 10,
+                  width: SizeConfig.blockSizeHorizontal * 4,
                 ),
                 InkWell(
                   onTap: () {
-                    buySellBloc.add(SendBuyRequestEvent(
-                        _carController.text,
-                        _modelController.text,
-                        _variantController.text,
-                        _yearController.text,
-                        DateTime.now().toString()));
+                    buySellBloc.add(SendSellRequestEvent(car, model, variant,
+                        regNo, year, DateTime.now().toString()));
                   },
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: SizeConfig.blockSizeHorizontal * 4,
-                          vertical: SizeConfig.blockSizeVertical * 2),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(
-                            SizeConfig.blockSizeHorizontal * 2),
-                      ),
-                      child: Text(
-                        'Interested in Buying',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: SizeConfig.blockSizeHorizontal * 2,
+                        vertical: SizeConfig.blockSizeVertical * 1),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(
+                          SizeConfig.blockSizeHorizontal * 2),
+                    ),
+                    child: Text(
+                      'Confirm',
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: SizeConfig.blockSizeVertical * 5,
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

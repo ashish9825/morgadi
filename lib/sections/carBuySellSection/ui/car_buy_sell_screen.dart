@@ -1,28 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:morgadi/sections/carBuySellSection/bloc/buy_sell.dart';
+import 'package:morgadi/sections/carBuySellSection/data/buy_sell_repository.dart';
 import 'package:morgadi/sections/carBuySellSection/widgets/buy_car.dart';
 import 'package:morgadi/sections/carBuySellSection/widgets/sell_car.dart';
 import 'package:morgadi/utils/size_config.dart';
 
-class CarBuySellScreen extends StatefulWidget {
+class CarBuySellScreen extends StatelessWidget {
   @override
-  _CarBuySellScreenState createState() => _CarBuySellScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => BuySellBloc(buySellRepository: BuySellRepository()),
+      child: CarBuySell(),
+    );
+  }
 }
 
-class _CarBuySellScreenState extends State<CarBuySellScreen>  {
+class CarBuySell extends StatefulWidget {
+  @override
+  _CarBuySellState createState() => _CarBuySellState();
+}
+
+class _CarBuySellState extends State<CarBuySell> {
+  BuySellBloc _buySellBloc;
+
+  @override
+  void initState() {
+    _buySellBloc = BlocProvider.of<BuySellBloc>(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   elevation: 0.0,
-      //   backgroundColor: Colors.white,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.arrow_back_ios),
-      //     onPressed: () => Navigator.of(context).pop(),
-      //   ),
-      // ),
       body: _buySellBody(),
     );
   }
@@ -36,7 +49,7 @@ class _CarBuySellScreenState extends State<CarBuySellScreen>  {
         icon: Icon(Icons.arrow_back_ios),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      expandedHeight: SizeConfig.blockSizeVertical*45,
+      expandedHeight: SizeConfig.blockSizeVertical * 45,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
@@ -46,7 +59,7 @@ class _CarBuySellScreenState extends State<CarBuySellScreen>  {
         tabs: [
           Tab(
             child: Container(
-              width: SizeConfig.blockSizeHorizontal*20,
+              width: SizeConfig.blockSizeHorizontal * 20,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
                       SizeConfig.blockSizeHorizontal * 10)),
@@ -58,7 +71,7 @@ class _CarBuySellScreenState extends State<CarBuySellScreen>  {
           ),
           Tab(
             child: Container(
-              width: SizeConfig.blockSizeHorizontal*20,
+              width: SizeConfig.blockSizeHorizontal * 20,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
                       SizeConfig.blockSizeHorizontal * 10)),
@@ -91,7 +104,7 @@ class _CarBuySellScreenState extends State<CarBuySellScreen>  {
           ];
         },
         body: TabBarView(
-          children: [BuyCar(), SellCar()],
+          children: [BuyCar(_buySellBloc), SellCar(_buySellBloc)],
         ),
       ),
     );
@@ -126,7 +139,7 @@ class _CarBuySellScreenState extends State<CarBuySellScreen>  {
               width: SizeConfig.blockSizeHorizontal * 70,
               child: Hero(
                 tag: 'Buy / Sell',
-                              child: SvgPicture.asset(
+                child: SvgPicture.asset(
                   "images/car_buy_sell.svg",
                 ),
               ),

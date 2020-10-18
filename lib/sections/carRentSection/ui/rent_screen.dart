@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/sections/carRentSection/data/firestore_provider.dart';
+import 'package:morgadi/sections/carRentSection/ui/select_car.dart';
 import 'package:morgadi/sections/carRentSection/widgets/city_options_dialog.dart';
 import 'package:morgadi/utils/constants.dart';
 import 'package:morgadi/utils/disabled_focus_node.dart';
@@ -239,28 +240,29 @@ class _CarRentScreenState extends State<CarRentScreen> {
                   SizedBox(
                     height: SizeConfig.blockSizeVertical * 5,
                   ),
-                  InkWell(
-                    onTap: () async {
-                      _provider
-                          .carsAvailable(_sourceController.text,
-                              _destinationController.text)
-                          .then((value) {
-                        print('List $value');
-                      });
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: SizeConfig.blockSizeHorizontal * 4,
-                            vertical: SizeConfig.blockSizeVertical * 2),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(
-                              SizeConfig.blockSizeHorizontal * 2),
-                        ),
-                        child: Text(
-                          'Search For Cars',
-                          style: TextStyle(color: Colors.white),
+                  Builder(
+                    builder: (context) => InkWell(
+                      onTap: () async {
+                        // _provider
+                        //     .fetchCars(_sourceController.text,
+                        //         _destinationController.text)
+                        //     .then((value) => print('VALUE: ${value[3].price}'));
+                        nextScreen(context);
+                      },
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: SizeConfig.blockSizeHorizontal * 4,
+                              vertical: SizeConfig.blockSizeVertical * 2),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(
+                                SizeConfig.blockSizeHorizontal * 2),
+                          ),
+                          child: Text(
+                            'Search For Cars',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
@@ -345,4 +347,35 @@ class _CarRentScreenState extends State<CarRentScreen> {
   }
 
   double toDouble(TimeOfDay time) => time.hour + time.minute / 60.0;
+
+  void nextScreen(BuildContext context) {
+    if (_sourceController.text != "" &&
+        _destinationController.text != "" &&
+        _dateController.text != "" &&
+        _timeController.text != "") {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CarOptions(
+                    source: _sourceController.text,
+                    destination: _destinationController.text,
+                    date: _dateController.text,
+                    time: _timeController.text,
+                  )));
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Please fill in all the details !',
+              style: TextStyle(color: Colors.white),
+            ),
+            Icon(Icons.error),
+          ],
+        ),
+        backgroundColor: Colors.red[300],
+      ));
+    }
+  }
 }
