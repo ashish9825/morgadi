@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:morgadi/utils/utility_functions.dart';
 import '../data/mortgage_repository.dart';
 import 'mortgage.dart';
 
 class MortgageBloc extends Bloc<MortgageEvent, MortgageState> {
   final MortgageRepository _mortgageRepository;
+  final UtilityFunction _utility;
+  final FirebaseAuth _firebaseAuth;
 
   String errorString = "";
   String verId = "";
@@ -14,6 +18,8 @@ class MortgageBloc extends Bloc<MortgageEvent, MortgageState> {
   MortgageBloc({@required MortgageRepository mortgageRepository})
       : assert(mortgageRepository != null),
         _mortgageRepository = mortgageRepository,
+        _utility = UtilityFunction(),
+        _firebaseAuth = FirebaseAuth.instance,
         super(InitialMortgageState());
 
   @override
@@ -36,6 +42,8 @@ class MortgageBloc extends Bloc<MortgageEvent, MortgageState> {
 
           if (verId == 'Success') {
             yield MortgageRequestedState();
+            _utility.launchWhatsapp(
+                'UserId: ${_firebaseAuth.currentUser.uid},\nCar: ${event.car},\n Request: Mortgage Request');
           } else {
             yield MortgageExceptionState(message: 'Some Error Occured');
           }

@@ -16,8 +16,13 @@ class AuthenticationBloc
       final bool hasToken = await userRepository.getUser() != null;
 
       if (hasToken) {
+        final bool userExists = await userRepository.checkIfUserExists();
         print('EVENT1 : $event');
-        yield Authenticated();
+        if (userExists) {
+          yield Authenticated();
+        } else {
+          yield Unauthenticated();
+        }
       } else {
         print('EVENT2 : $event');
         yield Unauthenticated();

@@ -30,9 +30,13 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
       });
     } else if (event is OtpSendEvent) {
       yield OtpSentState();
-    } else if (event is LoginCompleteEvent) {
-      yield LoginCompleteState(event.firebaseUser);
-    } else if (event is SignupFirstEvent) {
+    } 
+    
+    // else if (event is LoginCompleteEvent) {
+    //   yield LoginCompleteState(event.firebaseUser);
+    // } 
+    
+    else if (event is SignupFirstEvent) {
       yield SignupFirstState(event.firebaseUser);
     } else if (event is SignupDataSentEvent) {
       yield LoadingState();
@@ -65,13 +69,22 @@ class LoginBLoc extends Bloc<LoginEvent, LoginState> {
         UserCredential result =
             await _userRepository.verifyAndLogin(verId, event.otp);
 
+        final bool userExists = await _userRepository.checkIfUserExists();
+
         if (result.user != null) {
           print('NEW USER: ${result.additionalUserInfo.isNewUser}');
           if (result.additionalUserInfo.isNewUser) {
+            print('New User');
             this.newUser = true;
             yield SignupFirstState(result.user);
           } else {
-            yield LoginCompleteState(result.user);
+            if (userExists) {
+                print('User Exists');
+              yield LoginCompleteState(result.user);
+            } else {
+              print('User Does Not Exists');
+              yield SignupFirstState(result.user);
+            }
           }
         } else {
           yield OtpExceptionState(message: 'Invalid Otp !');

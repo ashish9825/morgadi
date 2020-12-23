@@ -168,8 +168,16 @@ class ConfirmDialog extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     rentBloc.add(
-                      SendRequestEvent(carName, source, destination, date, time,
-                          price, distance),
+                      SendRequestEvent(
+                        carName,
+                        source,
+                        destination,
+                        date,
+                        time,
+                        price,
+                        distance,
+                        DateTime.now().toString(),
+                      ),
                     );
                   },
                   child: Container(

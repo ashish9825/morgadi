@@ -4,8 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:morgadi/paints/circle_painter.dart';
 import 'package:morgadi/paints/hollow_circle_painter.dart';
-import 'package:morgadi/sections/authenticate/bloc/authentication_bloc.dart';
-import 'package:morgadi/sections/authenticate/bloc/authentication_event.dart';
+import 'package:morgadi/sections/authenticate/bloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/loginBloc/bloc.dart';
 import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
 import 'package:morgadi/sections/homeSection/ui/home.dart';
@@ -73,6 +72,7 @@ class NumberVerifyState extends StatelessWidget {
               );
           } else if (loginState is SignupFirstState) {
             Future.delayed(Duration.zero, () async {
+              print('PhoneNumber: $phoneNumber');
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -251,21 +251,28 @@ class NumberVerifyState extends StatelessWidget {
             height: SizeConfig.blockSizeVertical * 4,
           ),
           Center(
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                  text: "Didn't receive the code?",
-                  style: TextStyle(
-                      color: Colors.black54, fontFamily: "Poppins-Medium"),
-                  children: [
-                    TextSpan(
-                      text: " Resend",
-                      style: TextStyle(
-                          color: Color(0xFF91D3B3),
-                          fontWeight: FontWeight.bold,
-                          fontSize: SizeConfig.safeBlockHorizontal * 3.7),
-                    )
-                  ]),
+            child: InkWell(
+              onTap: () {
+                BlocProvider.of<LoginBLoc>(context).add(
+                  SendOtpEvent(phoneNo: phoneNumber),
+                );
+              },
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    text: "Didn't receive the code?",
+                    style: TextStyle(
+                        color: Colors.black54, fontFamily: "Poppins-Medium"),
+                    children: [
+                      TextSpan(
+                        text: " Resend",
+                        style: TextStyle(
+                            color: Color(0xFF91D3B3),
+                            fontWeight: FontWeight.bold,
+                            fontSize: SizeConfig.safeBlockHorizontal * 3.7),
+                      )
+                    ]),
+              ),
             ),
           ),
           SizedBox(
@@ -293,6 +300,9 @@ class NumberVerifyState extends StatelessWidget {
                     BorderRadius.circular(SizeConfig.safeBlockHorizontal * 2),
               ),
             ),
+          ),
+           SizedBox(
+            height: SizeConfig.blockSizeVertical * 2,
           ),
         ],
       ),

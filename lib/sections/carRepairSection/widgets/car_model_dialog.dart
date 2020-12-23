@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
+import 'package:morgadi/sections/carRepairSection/bloc/repair.dart';
 import 'package:morgadi/sections/carRepairSection/data/repair_provider.dart';
 import 'package:morgadi/utils/size_config.dart';
 
 class CarModelDialog extends StatelessWidget {
   final String carBrand;
-  CarModelDialog({@required this.carBrand});
+  final RepairBloc repairBloc;
+  CarModelDialog({@required this.carBrand, @required this.repairBloc});
 
   RepairProvider _provider = RepairProvider();
 
@@ -62,21 +66,56 @@ class CarModelDialog extends StatelessWidget {
   }
 
   Widget _modelsBody(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-      stream: _provider.fetchCarModels(carBrand),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Column(
-            children: List.generate(
-              snapshot.data.data()['cars'].length,
-              (index) =>
-                  modelWidget(snapshot.data.data()['cars'][index], context),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return _errorWidget(snapshot.error);
-        } else {
+    return StreamBuilder(
+      stream: repairBloc.internetStream,
+      builder: (ctxt, AsyncSnapshot<DataConnectionStatus> snap) {
+        if (!snap.hasData) {
           return _loadingIndicator();
+        }
+        var result = snap.data;
+
+        switch (result) {
+          case DataConnectionStatus.disconnected:
+            {
+              return Center(
+                child: Container(
+                  height: SizeConfig.blockSizeVertical * 40,
+                  width: SizeConfig.blockSizeHorizontal * 60,
+                  child: Lottie.asset("assets/no_internet.json"),
+                ),
+              );
+            }
+          case DataConnectionStatus.connected:
+            {
+              return StreamBuilder<DocumentSnapshot>(
+                stream: _provider.fetchCarModels(carBrand),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: List.generate(
+                        snapshot.data.data()['cars'].length,
+                        (index) => modelWidget(
+                            snapshot.data.data()['cars'][index], context),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return _errorWidget(snapshot.error);
+                  } else {
+                    return _loadingIndicator();
+                  }
+                },
+              );
+            }
+          default:
+            {
+              return Center(
+                child: Container(
+                  height: SizeConfig.blockSizeVertical * 40,
+                  width: SizeConfig.blockSizeHorizontal * 60,
+                  child: Lottie.asset("assets/no_internet.json"),
+                ),
+              );
+            }
         }
       },
     );

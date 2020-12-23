@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:morgadi/utils/utility_functions.dart';
 import 'repair.dart';
 import '../data/repair_repository.dart';
 
 class RepairBloc extends Bloc<RepairEvent, RepairState> {
   final RepairRepository _repairRepository;
+    final UtilityFunction _utility;
+  final FirebaseAuth _firebaseAuth;
 
   String errorString = "";
   String verId = "";
@@ -14,7 +18,12 @@ class RepairBloc extends Bloc<RepairEvent, RepairState> {
   RepairBloc({@required RepairRepository repairRepository})
       : assert(repairRepository != null),
         _repairRepository = repairRepository,
+         _utility = UtilityFunction(),
+        _firebaseAuth = FirebaseAuth.instance,
         super(InitialRepairState());
+
+  Stream<DataConnectionStatus> _internetStream =
+      DataConnectionChecker().onStatusChange;
 
   @override
   Stream<RepairState> mapEventToState(RepairEvent event) async* {
@@ -36,6 +45,8 @@ class RepairBloc extends Bloc<RepairEvent, RepairState> {
 
           if (verId == 'Success') {
             yield RepairRequestedState();
+                        _utility.launchWhatsapp(
+                'UserId: ${_firebaseAuth.currentUser.uid},\nCar: ${event.carBrand} ${event.carModel} ${event.otherCar},\n Request: Repair Request');
           } else {
             yield RepairExceptionState(message: 'Some Error Occured');
           }
@@ -74,4 +85,6 @@ class RepairBloc extends Bloc<RepairEvent, RepairState> {
   internetChecker() async {
     return await DataConnectionChecker().connectionStatus;
   }
+
+  Stream<DataConnectionStatus> get internetStream => _internetStream;
 }

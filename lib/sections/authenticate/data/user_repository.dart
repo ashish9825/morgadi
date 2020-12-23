@@ -40,7 +40,6 @@ class UserRepository {
     print('USER: ${_firebaseAuth.currentUser.uid}');
     var user = _firebaseAuth.currentUser;
     await user.updateProfile(displayName: name);
-    await user.updateEmail(email);
     await user.reload();
 
     return user;
@@ -61,5 +60,18 @@ class UserRepository {
       'city': city,
       'ownCar': ownCar
     });
+  }
+
+  Future<bool> checkIfUserExists() async {
+    try {
+      // Get Reference to Firestore 'Users' Collection
+      var collectionRef = FirebaseFirestore.instance.collection('users');
+
+      var userDoc =
+          await collectionRef.doc(_firebaseAuth.currentUser.uid).get();
+      return userDoc.exists;
+    } catch (e) {
+      throw e;
+    }
   }
 }

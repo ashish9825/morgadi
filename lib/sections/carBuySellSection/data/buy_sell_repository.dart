@@ -19,6 +19,7 @@ class BuySellRepository {
       'variant': variant,
       'regNo': regNo,
       'originYear': originYear,
+      'status': 'Pending',
       'timeStamp': timeStamp
     });
   }
@@ -34,6 +35,7 @@ class BuySellRepository {
       'model': model,
       'variant': variant,
       'originYearRange': originYearRange,
+      'status': 'Pending',
       'timeStamp': timeStamp
     });
   }

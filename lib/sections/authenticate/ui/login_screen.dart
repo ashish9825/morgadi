@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (context) => NumberVerify(
                       loginState: loginState,
                       loginBLoc: _loginBLoc,
-                      // userRepository: widget.userRepository,
+                      phoneNumber: '+91' + _phoneTextController.text,
                     ),
                   ),
                 );
@@ -108,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   builder: (context) => NumberVerify(
                     loginState: loginState,
                     loginBLoc: _loginBLoc,
+                    phoneNumber: '+91' + _phoneTextController.text,
                   ),
                 ),
               );
@@ -169,18 +170,19 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         Positioned(
-          top: SizeConfig.blockSizeVertical * 8,
-          left: SizeConfig.blockSizeHorizontal * 5,
+          top: SizeConfig.blockSizeVertical * 6,
+          left: SizeConfig.blockSizeHorizontal * 4,
           child: Container(
             width: SizeConfig.blockSizeHorizontal * 40,
-            child: Text(
-              'Welcome Back !',
-              style: TextStyle(
-                fontFamily: "Poppins-Medium",
-                color: Colors.black,
-                fontSize: SizeConfig.blockSizeHorizontal * 7,
-              ),
-            ),
+            // child: Text(
+            //   'Welcome Back !',
+            //   style: TextStyle(
+            //     fontFamily: "Poppins-Medium",
+            //     color: Colors.black,
+            //     fontSize: SizeConfig.blockSizeHorizontal * 7,
+            //   ),
+            // ),
+            child: SvgPicture.asset("images/morgadi_logo.svg", width: SizeConfig.blockSizeHorizontal*50,),
           ),
         ),
         Align(

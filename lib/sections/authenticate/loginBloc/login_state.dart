@@ -48,7 +48,7 @@ class SignupFirstState extends LoginState {
   }
 
   @override
-  List<Object> get props => [_firebaseUser];
+  List<Object> get props => [];
 }
 
 class SignupCompleteState extends LoginState {

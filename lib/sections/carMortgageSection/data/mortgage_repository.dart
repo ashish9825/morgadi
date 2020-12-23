@@ -20,6 +20,7 @@ class MortgageRepository {
       'variant': variant,
       'regNo': regNo,
       'originYear': originYear,
+      'status': 'Pending',
       'timeStamp': timeStamp,
     });
   }

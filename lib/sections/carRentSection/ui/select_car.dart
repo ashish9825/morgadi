@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:lottie/lottie.dart';
 import 'package:morgadi/sections/carRentSection/bloc/rent.dart';
 import 'package:morgadi/sections/carRentSection/data/firestore_provider.dart';
 import 'package:morgadi/sections/carRentSection/data/rent_repository.dart';
@@ -116,53 +118,86 @@ class _SelectCarState extends State<SelectCar> {
   }
 
   Widget _carsBody() {
-    return widget(
-          child: StreamBuilder<QuerySnapshot>(
-        stream: _provider.fetchCars(widget.source, widget.destination),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                Car car = Car.fromSnapshot(snapshot.data.docs[index]);
-                return InkWell(
-                  onTap: () {
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (context) => WillPopScope(
-                        onWillPop: () async => false,
-                        child: ConfirmDialog(
-                          rentBloc: _rentBloc,
-                          source: widget.source,
-                          destination: widget.destination,
-                          carName: car.name,
-                          price: _provider.priceForRent(
-                              widget.source, widget.destination, car.name),
-                          date: widget.date,
-                          time: widget.time,
-                          distance: _provider.distanceInKm(
-                              widget.source, widget.destination),
-                        ),
-                      ),
-                    );
-                  },
-                  child: CarItemSelect(
-                    car: car,
-                    price: _provider.priceForRent(
-                        widget.source, widget.destination, car.name),
-                  ),
-                );
-              },
-            );
-          } else if (snapshot.hasError) {
-            return _errorWidget(snapshot.error);
-          } else {
+    return StreamBuilder(
+        stream: _rentBloc.internetStream,
+        builder: (ctxt, AsyncSnapshot<DataConnectionStatus> snap) {
+          if (!snap.hasData) {
             return _loadingIndicator();
           }
-        },
-      ),
-    );
+          var result = snap.data;
+
+          switch (result) {
+            case DataConnectionStatus.disconnected:
+              {
+                return Center(
+                  child: Container(
+                    height: SizeConfig.blockSizeVertical * 40,
+                    width: SizeConfig.blockSizeHorizontal * 60,
+                    child: Lottie.asset("assets/no_internet1.json"),
+                  ),
+                );
+              }
+            case DataConnectionStatus.connected:
+              {
+                return StreamBuilder<QuerySnapshot>(
+                  stream:
+                      _provider.fetchCars(widget.source, widget.destination),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, index) {
+                          Car car = Car.fromSnapshot(snapshot.data.docs[index]);
+                          return InkWell(
+                            onTap: () {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) => WillPopScope(
+                                  onWillPop: () async => false,
+                                  child: ConfirmDialog(
+                                    rentBloc: _rentBloc,
+                                    source: widget.source,
+                                    destination: widget.destination,
+                                    carName: car.name,
+                                    price: _provider.priceForRent(widget.source,
+                                        widget.destination, car.name),
+                                    date: widget.date,
+                                    time: widget.time,
+                                    distance: _provider.distanceInKm(
+                                        widget.source, widget.destination),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: CarItemSelect(
+                              car: car,
+                              price: _provider.priceForRent(
+                                  widget.source, widget.destination, car.name),
+                            ),
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return _errorWidget(snapshot.error);
+                    } else {
+                      return _loadingIndicator();
+                    }
+                  },
+                );
+              }
+            default:
+              {
+                return Center(
+                  child: Container(
+                    height: SizeConfig.blockSizeVertical * 40,
+                    width: SizeConfig.blockSizeHorizontal * 60,
+                    child: Lottie.asset("assets/no_internet1.json"),
+                  ),
+                );
+              }
+          }
+        });
   }
 
   Widget _loadingIndicator() {

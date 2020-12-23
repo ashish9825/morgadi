@@ -13,9 +13,10 @@ class SendRequestEvent extends RentEvent {
   final String time;
   final String price;
   final int distance;
+  final String timeStamp;
 
   SendRequestEvent(this.carName, this.source, this.destination, this.date,
-      this.time, this.price, this.distance);
+      this.time, this.price, this.distance, this.timeStamp);
 }
 
 class RequestSentEvent extends RentEvent {

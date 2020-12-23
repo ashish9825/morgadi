@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:whatsapp_unilink/whatsapp_unilink.dart';
 import '../data/buy_sell_repository.dart';
 import 'buy_sell.dart';
 
@@ -10,10 +13,12 @@ class BuySellBloc extends Bloc<BuySellEvent, BuySellState> {
 
   String errorString = "";
   String verId = "";
+  final FirebaseAuth _firebaseAuth;
 
   BuySellBloc({@required BuySellRepository buySellRepository})
       : assert(buySellRepository != null),
         _buySellRepository = buySellRepository,
+        _firebaseAuth = FirebaseAuth.instance,
         super(InitialBuySellState());
 
   @override
@@ -36,6 +41,8 @@ class BuySellBloc extends Bloc<BuySellEvent, BuySellState> {
 
           if (verId == "Success") {
             yield SellRequestedState();
+            launchWhatsapp(
+                'UserId: ${_firebaseAuth.currentUser.uid},\nCar: ${event.car},\n Request: Sell Request');
           } else {
             yield BuySellExceptionState(message: 'Some Error Occured');
           }
@@ -66,6 +73,8 @@ class BuySellBloc extends Bloc<BuySellEvent, BuySellState> {
 
           if (verId == 'Success') {
             yield BuyRequestedState();
+            launchWhatsapp(
+                'UserId: ${_firebaseAuth.currentUser.uid},\nCar: ${event.car},\n Request: Buy Request');
           } else {
             yield BuySellExceptionState(message: 'Some Error Occured');
           }
@@ -102,5 +111,10 @@ class BuySellBloc extends Bloc<BuySellEvent, BuySellState> {
 
   internetChecker() async {
     return await DataConnectionChecker().connectionStatus;
+  }
+
+  launchWhatsapp(String text) async {
+    final link = WhatsAppUnilink(phoneNumber: '+919302725929', text: '$text');
+    await launch('$link');
   }
 }

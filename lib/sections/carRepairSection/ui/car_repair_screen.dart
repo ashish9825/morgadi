@@ -158,7 +158,9 @@ class _CarRepairState extends State<CarRepair> {
                           var carModelSelected = showDialog(
                             context: context,
                             builder: (context) => CarModelDialog(
-                                carBrand: _carBrandController.text),
+                              carBrand: _carBrandController.text,
+                              repairBloc: _repairBloc,
+                            ),
                           );
 
                           carModelSelected.then(

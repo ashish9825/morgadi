@@ -19,7 +19,7 @@ class SignupDetailPage extends StatelessWidget {
   final String phoneNumber;
 
   SignupDetailPage(
-      {@required this.loginBLoc, this.loginState, this.phoneNumber});
+      {this.loginBLoc, this.loginState, this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -302,6 +302,7 @@ class SignupDetail extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                print('PhoneNumber1: $phoneNumber');
                 BlocProvider.of<LoginBLoc>(context).add(
                   SignupDataSentEvent(
                       _nameController.text,
@@ -330,6 +331,9 @@ class SignupDetail extends StatelessWidget {
                 ),
               ),
             ),
+             SizedBox(
+            height: SizeConfig.blockSizeVertical * 2,
+          ),
           ],
         ),
       ),

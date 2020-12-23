@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:morgadi/utils/utility_functions.dart';
 import '../data/rent_repository.dart';
 import 'rent.dart';
 
 class RentBloc extends Bloc<RentEvent, RentState> {
   final RentRepository _rentRepository;
+   final UtilityFunction _utility;
+  final FirebaseAuth _firebaseAuth;
 
   String errorString = "";
   String verId = "";
@@ -15,9 +18,11 @@ class RentBloc extends Bloc<RentEvent, RentState> {
   RentBloc({@required RentRepository rentRepository})
       : assert(rentRepository != null),
         _rentRepository = rentRepository,
+          _utility = UtilityFunction(),
+        _firebaseAuth = FirebaseAuth.instance,
         super(InitialRentState());
 
-  BehaviorSubject<DataConnectionStatus> _subject =
+  Stream<DataConnectionStatus> _internetStream =
       DataConnectionChecker().onStatusChange;
 
   @override
@@ -30,8 +35,15 @@ class RentBloc extends Bloc<RentEvent, RentState> {
       if (status == DataConnectionStatus.connected) {
         try {
           await _rentRepository
-              .requestForCarRent(event.carName, event.source, event.destination,
-                  event.date, event.time, event.price, event.distance)
+              .requestForCarRent(
+                  event.carName,
+                  event.source,
+                  event.destination,
+                  event.date,
+                  event.time,
+                  event.price,
+                  event.distance,
+                  event.timeStamp)
               .then((value) {
             this.verId = "Success";
           }).catchError((onError) {
@@ -40,6 +52,8 @@ class RentBloc extends Bloc<RentEvent, RentState> {
 
           if (verId == "Success") {
             yield RentRequestedState();
+              _utility.launchWhatsapp(
+                'UserId: ${_firebaseAuth.currentUser.uid},\nCar: ${event.carName},\n Request: Rent Request');
           } else {
             yield RentExceptionState(message: 'Some Error Occured');
           }
@@ -72,7 +86,6 @@ class RentBloc extends Bloc<RentEvent, RentState> {
   @override
   Future<void> close() async {
     print('Rent Bloc CLosed');
-    _subject.close();
     super.close();
   }
 
@@ -83,4 +96,6 @@ class RentBloc extends Bloc<RentEvent, RentState> {
   connectivityStream() {
     var listener = DataConnectionChecker().onStatusChange;
   }
+
+  Stream<DataConnectionStatus> get internetStream => _internetStream;
 }

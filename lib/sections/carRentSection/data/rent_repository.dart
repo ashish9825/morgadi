@@ -8,7 +8,7 @@ class RentRepository {
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
   Future<void> requestForCarRent(String carName, String source, String destination, String date,
-      String time, String price, int distance) async {
+      String time, String price, int distance, String timeStamp) async {
     DocumentReference ref =
         FirebaseFirestore.instance.collection('carRentRequests').doc();
 
@@ -21,6 +21,8 @@ class RentRepository {
       'time': time,
       'price': price,
       'distance': distance,
+      'status': 'Pending',
+      'timeStamp': timeStamp,
     });
   }
 }

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:morgadi/sections/authenticate/bloc/bloc.dart';
-import 'package:morgadi/sections/authenticate/ui/signup_detail.dart';
 import 'package:morgadi/sections/homeSection/ui/home.dart';
 import 'package:morgadi/sections/splash/splash_screen.dart';
-
 import 'sections/authenticate/data/user_repository.dart';
 import 'sections/authenticate/ui/login_screen.dart';
 

@@ -20,6 +20,7 @@ class RepairRepository {
       'problem': problem,
       'variant': variant,
       'regNo': regNo,
+      'status': 'Pending',
       'timeStamp': timeStamp,
     });
   }
